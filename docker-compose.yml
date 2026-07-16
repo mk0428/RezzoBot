@@ -1,0 +1,28 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: rezzobot-api
+    ports:
+      - "8004:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    container_name: rezzobot-bot
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
