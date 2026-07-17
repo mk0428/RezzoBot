@@ -172,6 +172,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             user_data["state"] = "waiting_jd"
             reply = (
                 "✅ I've loaded **Michael Meng's** sample resume for you! *(REZZO Bot CEO)*\n\n"
+                "🔗 linkedin.com/in/mikemeng428\n\n"
                 "Michael is a **Strategic HR leader** with 8+ years at ByteDance and high-growth startups, "
                 "specializing in organizational development, talent acquisition, and HR systems. "
                 "Now, please send me a **Job Description (JD)** (text, link, or screenshot), and I'll analyze how well Michael matches it!"
