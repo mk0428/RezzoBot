@@ -206,6 +206,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await _handle_export(msg, user_data, fmt=text_lower)
             return
 
+        # Text JD input — if waiting for JD, treat text as JD
+        if state == "waiting_jd" and user_data.get("resume_text") and text not in ["optimize", "pdf", "docx"]:
+            await _analyze_and_report(msg, user_data, text)
+            return
+
         # AI conversation
         reply = await chat_with_ai(state, dict(user_data), text)
         await msg.reply_text(reply)
@@ -262,45 +267,9 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await status_msg.edit_text("✅ Received the file! I've saved this as your resume. Now, please send a JD!")
             return
 
-        # Analyze matching
-        await status_msg.edit_text("⏳ Analyzing match score...")
-        try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                res = await client.post(
-                    f"{API_URL}/api/analyze",
-                    json={"resume_text": resume_text, "jd_text": parsed_text}
-                )
-            if res.status_code == 200:
-                report = res.json()["report"]
-
-                # If using sample resume, slightly tweak output to be more "demo" friendly if needed
-                # (The API handles the score, but we can format it nicely here)
-
-                matched = " · ".join(report["matched_keywords"]) if report["matched_keywords"] else "None"
-                missing = " · ".join(report["missing_keywords"]) if report["missing_keywords"] else "None"
-
-                is_sample = user_data.get("is_using_sample", False)
-                header = "📊 **ATS Diagnostic Report (Sample Demo)**" if is_sample else "📊 **ATS Diagnostic Report**"
-
-                msg_text = (
-                    f"{header}\n"
-                    "═══════════════\n"
-                    f"Profile: **{'Michael Meng (REZZO Bot CEO)' if is_sample else 'Your Resume'}**\n"
-                    f"Match Score: **{report['score']}/100**\n\n"
-                    f"✅ **Matched ({len(report['matched_keywords'])})**\n{matched}\n\n"
-                    f"🔴 **Missing ({len(report['missing_keywords'])})**\n{missing}\n\n"
-                    "💡 **Suggestions**\n"
-                    + "\n".join([f"• {s}" for s in report["suggestions"][:3]]) + "\n\n"
-                    "📎 Reply **optimize** to rewrite your resume for this JD, or send another JD to continue testing."
-                )
-                await status_msg.edit_text(msg_text, parse_mode="Markdown")
-                # Store JD for later optimization
-                user_data["last_jd"] = parsed_text
-            else:
-                await status_msg.edit_text("❌ Analysis failed. Please try again.")
-        except Exception as e:
-            logger.error(f"Analyze error: {e}")
-            await status_msg.edit_text("❌ An error occurred during analysis.")
+        # Analyze matching via shared function
+        await status_msg.delete()
+        await _analyze_and_report(msg, user_data, parsed_text)
         return
 
     else:
@@ -314,6 +283,52 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "• Send a JD screenshot\n\n"
             "I'll analyze how well you match!"
         )
+
+
+async def _analyze_and_report(msg, user_data, jd_text: str):
+    """Run ATS analysis on resume + JD text, display report, offer optimize."""
+    resume_text = user_data.get("resume_text", "")
+    if not resume_text:
+        await msg.reply_text("❌ No resume found. Please upload one first.")
+        return
+
+    status_msg = await msg.reply_text("⏳ Analyzing match score...")
+
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            res = await client.post(
+                f"{API_URL}/api/analyze",
+                json={"resume_text": resume_text, "jd_text": jd_text}
+            )
+
+        if res.status_code != 200:
+            await status_msg.edit_text("❌ Analysis failed. Please try again.")
+            return
+
+        report = res.json()["report"]
+        is_sample = user_data.get("is_using_sample", False)
+        header = "📊 **ATS Diagnostic Report (Sample Demo)**" if is_sample else "📊 **ATS Diagnostic Report**"
+
+        matched = " · ".join(report["matched_keywords"]) if report["matched_keywords"] else "None"
+        missing = " · ".join(report["missing_keywords"]) if report["missing_keywords"] else "None"
+
+        msg_text = (
+            f"{header}\n"
+            "═══════════════\n"
+            f"Profile: **{'Michael Meng (REZZO Bot CEO)' if is_sample else 'Your Resume'}**\n"
+            f"Match Score: **{report['score']}/100**\n\n"
+            f"✅ **Matched ({len(report['matched_keywords'])})**\n{matched}\n\n"
+            f"🔴 **Missing ({len(report['missing_keywords'])})**\n{missing}\n\n"
+            "💡 **Suggestions**\n"
+            + "\n".join([f"• {s}" for s in report["suggestions"][:3]]) + "\n\n"
+            "📎 Reply **optimize** to rewrite your resume for this JD, or send another JD to keep testing."
+        )
+        await status_msg.edit_text(msg_text, parse_mode="Markdown")
+        user_data["last_jd"] = jd_text
+
+    except Exception as e:
+        logger.error(f"Analyze error: {e}")
+        await status_msg.edit_text("❌ An error occurred during analysis.")
 
 
 async def _handle_optimize(msg, user_data, status_msg=None):

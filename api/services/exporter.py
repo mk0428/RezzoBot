@@ -212,7 +212,7 @@ def export_docx(resume_text: str) -> Optional[bytes]:
             # Name
             if len(doc.paragraphs) <= 1:
                 p = doc.add_paragraph()
-                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                p.alignment = 0  # LEFT alignment
                 run = p.add_run(stripped)
                 run.bold = True
                 run.font.size = Pt(22)
