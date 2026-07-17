@@ -19,6 +19,7 @@ SYSTEM_PROMPT = """You are RezzoBot, a professional AI resume assistant helping 
 
 Current User State: {state}
 {context}
+{sample_resume_context}
 
 Reply Rules:
 - Natural, concise, and professional English.
@@ -36,15 +37,38 @@ TRUST_TEXT = (
 )
 
 SAMPLE_RESUME = """
-Name: Alex Chen
-Position: Python Backend Developer
-Experience: 3 years
-Core Skills:
-- Python, FastAPI/Django frameworks
-- Docker containerization & Docker Compose
-- AWS/Aliyun cloud services (EC2, S3, RDS)
-- MySQL and Redis, performance optimization
-- 3 years experience in high-traffic backend systems
+**Alex Chen**
+📧 alex.chen@email.com | 📱 +1-555-0123 | 🔗 linkedin.com/in/alexchen-dev | 📍 San Francisco, CA
+
+**PROFESSIONAL SUMMARY**
+Detail-oriented Senior Python Developer with 5+ years of experience in building scalable backend systems and optimizing cloud infrastructure. Proven track record of improving system performance by 40% and leading cross-functional teams to deliver high-impact features.
+
+**WORK EXPERIENCE**
+
+**TechStream Solutions | Senior Backend Engineer | Jan 2021 – Present**
+• Architected a real-time data processing pipeline using FastAPI and Redis, handling 50,000+ events per second with 99.9% uptime.
+• Optimized PostgreSQL database queries, reducing average API response time from 450ms to 120ms.
+• Mentored a team of 4 junior developers, implementing strict CI/CD workflows that cut deployment errors by 35%.
+• Integrated 10+ third-party APIs for payment processing and analytics, increasing feature velocity by 25%.
+
+**CloudNine Systems | Python Developer | June 2018 – Dec 2020**
+• Developed and maintained 15+ microservices using Django and Docker, supporting a user base of 500k+ active monthly users.
+• Migration of legacy monolithic application to AWS (EC2, S3, RDS), resulting in 50% reduction in monthly infrastructure costs.
+• Improved unit test coverage from 40% to 85%, significantly reducing production bugs by 20%.
+• Collaborated with frontend teams to design and implement RESTful APIs using Swagger/OpenAPI specifications.
+
+**EDUCATION**
+**Bachelor of Science in Computer Science** | University of California, Berkeley | 2018
+
+**SKILLS**
+• **Languages/Frameworks**: Python (Expert), FastAPI, Django, Flask, SQL, Go (Intermediate)
+• **Infrastructure**: AWS, Docker, Kubernetes, Terraform, GitHub Actions, Jenkins
+• **Databases**: PostgreSQL, MySQL, Redis, MongoDB, Elasticsearch
+• **Soft Skills**: Technical Leadership, Agile/Scrum, System Design, Problem Solving
+
+**PROJECTS**
+• **AI-Powered Log Analyzer**: Built a tool using Python and NLP to automatically categorize and prioritize server logs, reducing manual triaging time by 60%.
+• **Open Source Contributor**: Active contributor to several Python-based web frameworks and CLI tools.
 """
 
 STATES = {
@@ -56,13 +80,20 @@ STATES = {
 async def chat_with_ai(state: str, context: dict, user_message: str) -> str:
     """Call DeepSeek to generate a reply"""
     state_desc = STATES.get(state, "")
-    context_str = "\n".join(f"{k}: {v}" for k, v in context.items() if v)
 
-    prompt = (
-        f"Current State: {state_desc}\n"
-        f"Context:\n{context_str}\n\n"
-        f"User Message: {user_message}\n\n"
-        f"Please reply to the user (return only the reply content, no extra explanation):"
+    # Separate sample_resume from other context to avoid duplication in system prompt
+    is_using_sample = context.get("is_using_sample", False)
+    sample_resume_context = ""
+    if is_using_sample:
+        sample_resume_context = f"\n--- SAMPLE RESUME IN USE ---\n{SAMPLE_RESUME}\n----------------------------"
+
+    context_filtered = {k: v for k, v in context.items() if k not in ["is_using_sample", "ai_offered_sample"]}
+    context_str = "\n".join(f"{k}: {v}" for k, v in context_filtered.items() if v)
+
+    full_system_prompt = SYSTEM_PROMPT.format(
+        state=state_desc,
+        context=context_str,
+        sample_resume_context=sample_resume_context
     )
 
     deepseek_key = os.getenv("DEEPSEEK_API_KEY", "")
@@ -76,7 +107,10 @@ async def chat_with_ai(state: str, context: dict, user_message: str) -> str:
                 headers={"Authorization": f"Bearer {deepseek_key}", "Content-Type": "application/json"},
                 json={
                     "model": "deepseek-v4-flash",
-                    "messages": [{"role": "user", "content": prompt}],
+                    "messages": [
+                        {"role": "system", "content": full_system_prompt},
+                        {"role": "user", "content": user_message}
+                    ],
                     "max_tokens": 300,
                     "temperature": 0.7,
                 }
@@ -126,12 +160,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
         # Simulated resume feature
-        if any(kw in text_lower for kw in ["sample", "demo", "example"]):
+        trigger_keywords = ["sample", "demo", "example"]
+        affirmative_keywords = ["yes", "ok", "sure", "try"]
+
+        is_trigger = any(kw in text_lower for kw in trigger_keywords)
+        is_affirmative = any(kw in text_lower for kw in affirmative_keywords) and user_data.get("ai_offered_sample")
+
+        if is_trigger or is_affirmative:
             user_data["resume_text"] = SAMPLE_RESUME
+            user_data["is_using_sample"] = True
             user_data["state"] = "waiting_jd"
             reply = (
-                "✅ I've loaded a **sample resume** (3-year exp Python Developer) for you!\n\n"
-                "Now, please send me a **Job Description (JD)** (text, link, or screenshot), and I'll analyze how well this sample matches it!"
+                "✅ I've loaded **Alex Chen's** sample resume for you!\n\n"
+                "Alex is a **Senior Backend Engineer** with expertise in Python, FastAPI, and AWS. "
+                "Now, please send me a **Job Description (JD)** (text, link, or screenshot), and I'll analyze how well Alex matches it!"
             )
             await msg.reply_text(reply, parse_mode="Markdown")
             return
@@ -140,10 +182,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply = await chat_with_ai(state, dict(user_data), text)
         await msg.reply_text(reply)
 
-        # Auto-switch state based on reply content
+        # Track if AI offered a sample
         reply_lower = reply.lower()
-        if state == "initial" and any(kw in reply_lower for kw in ["resume", "upload", "send", "pdf", "file"]):
-            user_data["state"] = "waiting_resume"
+        if "sample resume" in reply_lower or "demo" in reply_lower:
+            user_data["ai_offered_sample"] = True
+        else:
+            # Only keep the offer flag for one turn unless it's a greeting
+            if not any(g in text_lower for g in greetings):
+                user_data["ai_offered_sample"] = False
         return
 
     # File messages (PDF/Images)
@@ -185,7 +231,7 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not resume_text:
             user_data["resume_text"] = parsed_text
             user_data["state"] = "waiting_jd"
-            await status_msg.edit_text("✅ Received the file! It seems your previous resume data was lost, so I've saved this as your resume. Now, please send a JD!")
+            await status_msg.edit_text("✅ Received the file! I've saved this as your resume. Now, please send a JD!")
             return
 
         # Analyze matching
@@ -198,11 +244,20 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
             if res.status_code == 200:
                 report = res.json()["report"]
+
+                # If using sample resume, slightly tweak output to be more "demo" friendly if needed
+                # (The API handles the score, but we can format it nicely here)
+
                 matched = " · ".join(report["matched_keywords"]) if report["matched_keywords"] else "None"
                 missing = " · ".join(report["missing_keywords"]) if report["missing_keywords"] else "None"
+
+                is_sample = user_data.get("is_using_sample", False)
+                header = "📊 **ATS Diagnostic Report (Sample Demo)**" if is_sample else "📊 **ATS Diagnostic Report**"
+
                 msg_text = (
-                    "📊 **ATS Diagnostic Report**\n"
+                    f"{header}\n"
                     "═══════════════\n"
+                    f"Profile: **{'Alex Chen (Sample)' if is_sample else 'Your Resume'}**\n"
                     f"Match Score: **{report['score']}/100**\n\n"
                     f"✅ **Matched ({len(report['matched_keywords'])})**\n{matched}\n\n"
                     f"🔴 **Missing ({len(report['missing_keywords'])})**\n{missing}\n\n"
