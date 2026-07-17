@@ -32,7 +32,7 @@ Reply Rules:
 
 TRUST_TEXT = (
     "🔒 **Privacy**: Your data is encrypted during transmission and auto-deleted within 24 hours. Send /delete anytime to erase all data.\n\n"
-    "**Want to try first?** Just say **\"sample resume\"** and I will run a full ATS demo with a sample profile - no need to share your real info.\n\n"
+    "**Want to try first?** Just reply **1** and I'll load the REZZO Bot CEO's real resume for a full ATS demo - no need to share your info.\n\n"
     "Or send your actual resume (PDF or screenshot) directly."
 )
 
@@ -160,7 +160,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await msg.reply_text("✅ All your data has been cleared. See you next time!")
             return
 
-        # Simulated resume feature
+        # Simulated resume feature — reply "1" to load CEO's resume
+        if text == "1" and not user_data.get("resume_text"):
+            user_data["resume_text"] = SAMPLE_RESUME
+            user_data["is_using_sample"] = True
+            user_data["state"] = "waiting_jd"
+            reply = (
+                "✅ I've loaded **Michael Meng's** sample resume for you! *(REZZO Bot CEO)*\n\n"
+                "🔗 linkedin.com/in/mikemeng428\n\n"
+                "Michael is a **Strategic HR leader** with 8+ years in HR, including 4 years at ByteDance and experience at high-growth startups, "
+                "specializing in organizational development, talent acquisition, and HR systems. "
+                "Now, please send me a **Job Description (JD)** (text, link, or screenshot), and I'll analyze how well Michael matches it!"
+            )
+            await msg.reply_text(reply, parse_mode="Markdown")
+            return
+
+        # Also support keyword triggers (sample, demo, yes, ok, etc.)
         trigger_keywords = ["sample", "demo", "example"]
         affirmative_keywords = ["yes", "ok", "sure", "try"]
 
