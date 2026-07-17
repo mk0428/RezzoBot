@@ -1,0 +1,47 @@
+import { FileText, Target, Zap, ChevronRight } from 'lucide-react';
+
+const features = [
+  {
+    title: 'Build',
+    description: 'Use our AI-powered resume builder to create a professional resume in minutes.',
+    icon: FileText,
+    color: 'bg-blue-50 text-blue-600',
+    hoverColor: 'group-hover:bg-blue-100'
+  },
+  {
+    title: 'Score',
+    description: 'Get an instant ATS score and detailed feedback on how to improve your resume.',
+    icon: Zap,
+    color: 'bg-yellow-50 text-yellow-600',
+    hoverColor: 'group-hover:bg-yellow-100'
+  },
+  {
+    title: 'Target',
+    description: 'Match your resume to a specific job description to increase your interview chances.',
+    icon: Target,
+    color: 'bg-green-50 text-green-600',
+    hoverColor: 'group-hover:bg-green-100'
+  }
+];
+
+export default function FeatureCards() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {features.map((feature, idx) => (
+        <div key={idx} className="group bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-200/20 transition-all cursor-pointer">
+          <div className={`w-14 h-14 ${feature.color} ${feature.hoverColor} rounded-xl flex items-center justify-center mb-6 transition-colors duration-300`}>
+            <feature.icon className="w-7 h-7" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-3 tracking-tight">{feature.title}</h3>
+          <p className="text-gray-500 text-sm leading-relaxed mb-6 font-medium">
+            {feature.description}
+          </p>
+          <div className="flex items-center text-sm font-bold text-blue-600 space-x-1 group-hover:translate-x-1 transition-transform">
+            <span>Learn more</span>
+            <ChevronRight size={16} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
