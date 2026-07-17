@@ -51,6 +51,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🎯 用模拟简历体验", callback_data="sample_tech")],
         [InlineKeyboardButton("📄 直接上传我的简历", callback_data="upload_real")],
+        [InlineKeyboardButton("🔄 重新开始", callback_data="restart")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -202,7 +203,7 @@ async def handle_jd(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
             await status_msg.edit_text(msg, parse_mode="Markdown")
-            return ConversationHandler.END
+            return WAITING_FOR_JD
         else:
             await status_msg.edit_text(f"❌ 分析失败 (HTTP {res.status_code})。")
             return WAITING_FOR_JD
@@ -246,9 +247,11 @@ def main():
             CHOOSING: [
                 CallbackQueryHandler(sample_resume, pattern="^sample_"),
                 CallbackQueryHandler(upload_real, pattern="^upload_real"),
+                CallbackQueryHandler(start, pattern="^restart$"),
                 MessageHandler(filters.Document.ALL | filters.PHOTO, handle_resume_file),
             ],
             WAITING_FOR_JD: [
+                CallbackQueryHandler(start, pattern="^restart$"),
                 MessageHandler(filters.TEXT | filters.PHOTO, handle_jd),
             ],
         },
