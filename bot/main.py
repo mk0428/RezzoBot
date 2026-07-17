@@ -238,7 +238,10 @@ def main():
     application = Application.builder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
+        entry_points=[
+            CommandHandler("start", start),
+            MessageHandler(filters.Document.ALL | filters.PHOTO, handle_resume_file),
+        ],
         states={
             CHOOSING: [
                 CallbackQueryHandler(sample_resume, pattern="^sample_"),
