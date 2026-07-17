@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Any
 
 
 class Experience(BaseModel):
@@ -29,6 +29,28 @@ class Resume(BaseModel):
     skills: List[str] = []
     languages: List[str] = []
     raw_text: str = ""
+
+
+class ParseResponse(BaseModel):
+    text: str
+    metadata: Optional[dict] = {}
+
+
+class AnalyzeRequest(BaseModel):
+    resume_text: str
+    jd_text: str
+
+
+class ATSReport(BaseModel):
+    score: int
+    matched_keywords: List[str]
+    missing_keywords: List[str]
+    suggestions: List[str]
+    match_detail: str
+
+
+class AnalyzeResponse(BaseModel):
+    report: ATSReport
 
 
 class ATSMatchRequest(BaseModel):

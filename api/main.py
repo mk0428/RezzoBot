@@ -6,7 +6,11 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.routers import resume
+
 app = FastAPI(title="RezzoBot API", version="0.1.0")
+
+app.include_router(resume.router)
 
 app.add_middleware(
     CORSMiddleware,

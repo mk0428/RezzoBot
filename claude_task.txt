@@ -1,0 +1,46 @@
+Implement PLAN_DAY1-3.md. Here is the project context:
+
+RezzoBot — Telegram Bot for ATS resume optimization.
+Stack: Python 3.12, FastAPI, python-telegram-bot, Docker Compose.
+Model: DeepSeek v4-flash (TEXT ONLY — NO vision support).
+PDF/image text: PyMuPDF + pytesseract + pdf2image.
+Deploy: Aliyun 47.84.54.161 (but don't deploy, just code + git).
+
+CRITICAL RULES:
+1. DeepSeek v4-flash does NOT support images. No image_url, no base64 images in API calls. OCR first, then pass text.
+2. DEEPSEEK_API_KEY in .env. Read from os.environ. Never output the key value.
+3. .gitignore must include .env — check it exists.
+4. Keep existing /start, /delete, and sample resume flow working.
+5. All user data 24h auto-delete (DATA_RETENTION_HOURS=24 in .env).
+
+WORK ORDER:
+1. Read all existing files first: bot/main.py, api/main.py, api/models/schemas.py, Dockerfile.api, docker-compose.yml, requirements.txt
+2. Update Dockerfile.api to install: tesseract-ocr, libtesseract-dev, poppler-utils
+3. Update requirements.txt with: pytesseract, PyMuPDF, pdf2image, Pillow, beautifulsoup4, requests, aiofiles
+4. Create api/services/parser.py — three functions:
+   - extract_text_from_pdf(bytes): PyMuPDF for digital PDFs, fallback to pytesseract for scanned
+   - extract_text_from_image(bytes): pytesseract OCR
+   - extract_jd_from_url(url): requests + BeautifulSoup
+5. Create api/services/analyzer.py — two functions calling DeepSeek API:
+   - extract_keywords(jd_text): returns list of key requirements/skills
+   - ats_match(resume_text, jd_text): returns {score, matched_keywords, missing_keywords, suggestions}
+6. Update api/models/schemas.py: ParseResponse, AnalyzeRequest, AnalyzeResponse, ATSReport
+7. Create api/routers/resume.py: POST /api/parse, POST /api/analyze
+8. Update api/main.py to include the new router
+9. Rewrite bot/main.py handle_document: download file → call /api/parse → store in memory → ask for JD
+10. Add JD input handling in bot: recognize links vs images vs text
+11. When both resume and JD ready → call /api/analyze → display formatted ATS report
+12. git add -A && git commit -m "feat: ATS resume analysis pipeline with OCR" && git push
+
+BOT FLOW:
+User sends PDF → Bot parses → Bot asks "Send JD (link / screenshot / paste)" → User sends JD → Bot analyzes → Bot shows ATS report with score + matched + missing keywords
+
+ATS REPORT FORMAT (Markdown):
+📊 ATS 诊断报告
+匹配度: XX/100
+
+✅ 已匹配 (X/Y)
+keyword1 · keyword2 · keyword3
+
+🔴 缺失 (X/Y)
+keyword1 · keyword2 · keyword3
