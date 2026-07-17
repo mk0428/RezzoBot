@@ -23,12 +23,12 @@ def extract_keywords(jd_text: str) -> List[str]:
         return []
 
     prompt = f"""
-    你是一个专业的简历筛选专家。请从以下职位描述 (JD) 中提取核心技能关键词（包括编程语言、工具、框架、领域知识、软技能等）。
-    只返回关键词列表，用逗号分隔。
+Extract core skill keywords from the following job description (JD). Include programming languages, tools, frameworks, domain knowledge, and soft skills.
+Return only a comma-separated list of keywords. No explanations, no extra text.
 
-    JD 内容：
-    {jd_text}
-    """
+JD content:
+{jd_text}
+"""
 
     try:
         response = client.chat.completions.create(
@@ -61,28 +61,28 @@ def ats_match(resume_text: str, jd_text: str) -> Dict[str, Any]:
         }
 
     prompt = f"""
-    你是一个高级 ATS (Applicant Tracking System) 解析专家。
-    请对比以下简历和职位描述 (JD)，并给出匹配分析报告。
+You are a professional ATS (Applicant Tracking System) expert.
+Compare the following resume and job description (JD) and provide a matching analysis report.
 
-    简历文本：
-    ---
-    {resume_text}
-    ---
+Resume:
+---
+{resume_text}
+---
 
-    JD 文本：
-    ---
-    {jd_text}
-    ---
+JD:
+---
+{jd_text}
+---
 
-    请以 JSON 格式返回分析结果，包含以下字段：
-    - score: 匹配度评分 (0-100 的整数)
-    - matched_keywords: 简历中已有的关键词列表
-    - missing_keywords: JD 要求但简历中缺失的关键词列表
-    - suggestions: 改进建议列表
-    - match_detail: 简短的匹配总结
+Return the analysis as JSON with these fields:
+- score: match score (integer 0-100)
+- matched_keywords: list of keywords from JD that are present in the resume
+- missing_keywords: list of keywords from JD that are missing from the resume
+- suggestions: improvement suggestions in English (list of strings)
+- match_detail: brief match summary in English
 
-    注意：只返回纯 JSON 内容，不要包含 Markdown 代码块。
-    """
+IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text.
+"""
 
     try:
         response = client.chat.completions.create(

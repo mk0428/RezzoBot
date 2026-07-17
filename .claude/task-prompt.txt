@@ -1,0 +1,5 @@
+以下是当前 bot/main.py 的完整代码。你需要基于它实现 P0 功能。
+
+先读取 task-p0.md 了解需求，然后修改 bot/main.py。
+修改完成后运行 python3 -c "import ast; ast.parse(open('bot/main.py').read()); print('Syntax OK')" 验证语法。
+然后 git add bot/main.py && git commit -m "feat: trust statement and simulated resume" && git push origin main
