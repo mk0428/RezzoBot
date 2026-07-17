@@ -37,38 +37,38 @@ TRUST_TEXT = (
 )
 
 SAMPLE_RESUME = """
-**Alex Chen**
-📧 alex.chen@email.com | 📱 +1-555-0123 | 🔗 linkedin.com/in/alexchen-dev | 📍 San Francisco, CA
+**Michael Meng** — *REZZO Bot CEO*
+🔗 linkedin.com/in/mikemeng428 | 📍 Shanghai, China
 
 **PROFESSIONAL SUMMARY**
-Detail-oriented Senior Python Developer with 5+ years of experience in building scalable backend systems and optimizing cloud infrastructure. Proven track record of improving system performance by 40% and leading cross-functional teams to deliver high-impact features.
+Strategic HR leader with 8+ years of experience spanning top-tier tech organizations (ByteDance) and high-growth startups (C-round to Pre-IPO). Proven track record in organizational development, talent acquisition strategy, and HR system construction for product R&D and Infrastructure teams in AI-native and large-scale tech environments.
 
 **WORK EXPERIENCE**
 
-**TechStream Solutions | Senior Backend Engineer | Jan 2021 – Present**
-• Architected a real-time data processing pipeline using FastAPI and Redis, handling 50,000+ events per second with 99.9% uptime.
-• Optimized PostgreSQL database queries, reducing average API response time from 450ms to 120ms.
-• Mentored a team of 4 junior developers, implementing strict CI/CD workflows that cut deployment errors by 35%.
-• Integrated 10+ third-party APIs for payment processing and analytics, increasing feature velocity by 25%.
+**AtlasV | HR Director | Jan 2025 – Present**
+• Leading HR operations for an AI-native startup, building HR infrastructure from the ground up to support rapid team scaling and product development.
 
-**CloudNine Systems | Python Developer | June 2018 – Dec 2020**
-• Developed and maintained 15+ microservices using Django and Docker, supporting a user base of 500k+ active monthly users.
-• Migration of legacy monolithic application to AWS (EC2, S3, RDS), resulting in 50% reduction in monthly infrastructure costs.
-• Improved unit test coverage from 40% to 85%, significantly reducing production bugs by 20%.
-• Collaborated with frontend teams to design and implement RESTful APIs using Swagger/OpenAPI specifications.
+**ByteDance | Regional HR Head, HRBP & Recruitment Head | Mar 2020 – Mar 2024**
+• Served as regional HR head and business line HRBP for product R&D and Infrastructure departments, driving strategic workforce planning across the region.
+• Led business strategic planning and organizational development, aligning HR strategy with product roadmap and engineering hiring goals.
+• Built employer brand and recruitment systems that improved hiring velocity and quality for critical technical roles across multiple teams.
 
-**EDUCATION**
-**Bachelor of Science in Computer Science** | University of California, Berkeley | 2018
+**Huayun Data | Head of HRBP | Oct 2016 – Mar 2020**
+• Promoted from HR specialist to HRBP team leader, directly supporting the company's growth from C-round to Pre-IPO stage.
+• Led executive recruitment and corporate M&A integration, constructing scalable HR systems aligned with hyper-growth business needs.
+• Designed and implemented performance management frameworks that drove organizational accountability and team effectiveness.
+
+**EDUCATION & CERTIFICATIONS**
+2021.12  SHRM Senior Certified Professional (SHRM-SCP)
+2021.01  SHRM Certified Professional (SHRM-CP)
+2015–2017  Jilin University — Master of Business Administration (MBA)
+2007–2011  Qingdao University — B.S. in Electronic Information Science & Technology
 
 **SKILLS**
-• **Languages/Frameworks**: Python (Expert), FastAPI, Django, Flask, SQL, Go (Intermediate)
-• **Infrastructure**: AWS, Docker, Kubernetes, Terraform, GitHub Actions, Jenkins
-• **Databases**: PostgreSQL, MySQL, Redis, MongoDB, Elasticsearch
-• **Soft Skills**: Technical Leadership, Agile/Scrum, System Design, Problem Solving
-
-**PROJECTS**
-• **AI-Powered Log Analyzer**: Built a tool using Python and NLP to automatically categorize and prioritize server logs, reducing manual triaging time by 60%.
-• **Open Source Contributor**: Active contributor to several Python-based web frameworks and CLI tools.
+• **HR Strategy**: Organizational Development, Talent Acquisition, HRBP, Performance Management
+• **Business Partnership**: Strategic Planning, M&A Integration, Employer Branding
+• **Industries**: AI/Technology, Internet, Cloud Computing
+• **Languages**: Mandarin (Native), English (Professional Working)
 """
 
 STATES = {
@@ -171,9 +171,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             user_data["is_using_sample"] = True
             user_data["state"] = "waiting_jd"
             reply = (
-                "✅ I've loaded **Alex Chen's** sample resume for you!\n\n"
-                "Alex is a **Senior Backend Engineer** with expertise in Python, FastAPI, and AWS. "
-                "Now, please send me a **Job Description (JD)** (text, link, or screenshot), and I'll analyze how well Alex matches it!"
+                "✅ I've loaded **Michael Meng's** sample resume for you! *(REZZO Bot CEO)*\n\n"
+                "Michael is a **Strategic HR leader** with 8+ years at ByteDance and high-growth startups, "
+                "specializing in organizational development, talent acquisition, and HR systems. "
+                "Now, please send me a **Job Description (JD)** (text, link, or screenshot), and I'll analyze how well Michael matches it!"
             )
             await msg.reply_text(reply, parse_mode="Markdown")
             return
@@ -257,7 +258,7 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 msg_text = (
                     f"{header}\n"
                     "═══════════════\n"
-                    f"Profile: **{'Alex Chen (Sample)' if is_sample else 'Your Resume'}**\n"
+                    f"Profile: **{'Michael Meng (REZZO Bot CEO)' if is_sample else 'Your Resume'}**\n"
                     f"Match Score: **{report['score']}/100**\n\n"
                     f"✅ **Matched ({len(report['matched_keywords'])})**\n{matched}\n\n"
                     f"🔴 **Missing ({len(report['missing_keywords'])})**\n{missing}\n\n"
