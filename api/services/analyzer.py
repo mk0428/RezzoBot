@@ -32,7 +32,7 @@ def extract_keywords(jd_text: str) -> List[str]:
 
     try:
         response = client.chat.completions.create(
-            model="deepseek-chat",
+            model="deepseek-v4-flash",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that extracts keywords from job descriptions."},
                 {"role": "user", "content": prompt}
@@ -86,7 +86,7 @@ def ats_match(resume_text: str, jd_text: str) -> Dict[str, Any]:
 
     try:
         response = client.chat.completions.create(
-            model="deepseek-chat",
+            model="deepseek-v4-flash",
             messages=[
                 {"role": "system", "content": "You are a resume analysis expert. Output ONLY valid JSON."},
                 {"role": "user", "content": prompt}
