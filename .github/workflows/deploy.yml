@@ -1,0 +1,22 @@
+name: Deploy to Aliyun
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Aliyun server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.ALIYUN_HOST }}
+          username: root
+          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          script: |
+            cd /root/RezzoBot
+            git pull origin main
+            docker compose up -d --build
