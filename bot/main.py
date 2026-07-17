@@ -145,6 +145,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if any(g in text_lower for g in greetings) and state == "initial":
             user_data.clear()
             user_data["state"] = "initial"
+            user_data["ai_offered_sample"] = True
             reply = (
                 f"👋 Hello {user.first_name}! I'm **RezzoBot**, your AI resume assistant.\n\n"
                 "I can help you analyze how well your resume matches a job and provide professional ATS optimization tips.\n\n"
