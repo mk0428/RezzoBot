@@ -196,6 +196,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await msg.reply_text(reply, parse_mode="Markdown")
             return
 
+# Optimize command — after ATS report, user can optimize their resume
+        if text_lower == "optimize" and user_data.get("resume_text") and user_data.get("last_jd"):
+            await _handle_optimize(msg, user_data, status_msg=None)
+            return
+
+        # Export commands — after optimization
+        if text_lower in ["pdf", "docx"] and user_data.get("optimized_text"):
+            await _handle_export(msg, user_data, fmt=text_lower)
+            return
+
         # AI conversation
         reply = await chat_with_ai(state, dict(user_data), text)
         await msg.reply_text(reply)
@@ -281,9 +291,11 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"🔴 **Missing ({len(report['missing_keywords'])})**\n{missing}\n\n"
                     "💡 **Suggestions**\n"
                     + "\n".join([f"• {s}" for s in report["suggestions"][:3]]) + "\n\n"
-                    "📎 You can send another JD to continue testing, or send /start to begin again."
+                    "📎 Reply **optimize** to rewrite your resume for this JD, or send another JD to continue testing."
                 )
                 await status_msg.edit_text(msg_text, parse_mode="Markdown")
+                # Store JD for later optimization
+                user_data["last_jd"] = parsed_text
             else:
                 await status_msg.edit_text("❌ Analysis failed. Please try again.")
         except Exception as e:
@@ -302,6 +314,99 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "• Send a JD screenshot\n\n"
             "I'll analyze how well you match!"
         )
+
+
+async def _handle_optimize(msg, user_data, status_msg=None):
+    """Call API to optimize resume, show changes."""
+    resume_text = user_data.get("resume_text", "")
+    jd_text = user_data.get("last_jd", "")
+
+    if not resume_text or not jd_text:
+        await msg.reply_text("❌ Missing resume or JD. Please start over with /start")
+        return
+
+    status = await msg.reply_text("⏳ AI is optimizing your resume for this JD...")
+
+    try:
+        # Build a minimal Resume for the API
+        resume_data = {
+            "resume": {"raw_text": resume_text, "name": "", "experiences": [], "education": [], "skills": []},
+            "jd_text": jd_text,
+        }
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            res = await client.post(f"{API_URL}/api/optimize", json=resume_data)
+
+        if res.status_code != 200:
+            await status.edit_text("❌ Optimization failed. Please try again.")
+            return
+
+        data = res.json()
+        optimized_text = data.get("optimized_resume", {}).get("raw_text", "")
+        change_log = data.get("change_log", [])
+
+        if not optimized_text:
+            await status.edit_text("❌ Optimization returned empty result.")
+            return
+
+        # Show change log + preview
+        changes = "\n".join([f"• {s}" for s in change_log[:5]])
+        preview = optimized_text[:600] + ("..." if len(optimized_text) > 600 else "")
+
+        reply = (
+            "✨ **Resume Optimized!**\n\n"
+            f"**What changed:**\n{changes}\n\n"
+            f"**Preview:**\n```\n{preview}\n```\n\n"
+            "**Export options:**\n"
+            "• Reply **pdf** to download as PDF\n"
+            "• Reply **docx** to download as Word\n"
+            "• Reply **optimize** again with a different JD"
+        )
+        await status.edit_text(reply, parse_mode="Markdown")
+        user_data["optimized_text"] = optimized_text
+
+    except Exception as e:
+        logger.error(f"Optimize error: {e}")
+        await status.edit_text("❌ An error occurred during optimization.")
+
+
+async def _handle_export(msg, user_data, fmt: str):
+    """Export optimized resume as PDF or DOCX."""
+    optimized_text = user_data.get("optimized_text", "")
+    if not optimized_text:
+        await msg.reply_text("❌ No optimized resume to export. Run **optimize** first.")
+        return
+
+    status = await msg.reply_text(f"⏳ Generating {fmt.upper()}...")
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            res = await client.post(
+                f"{API_URL}/api/export/{fmt}",
+                data={"resume_text": optimized_text},
+            )
+
+        if res.status_code != 200:
+            await status.edit_text(f"❌ {fmt.upper()} generation failed.")
+            return
+
+        ext = fmt
+        media_type = (
+            "application/pdf" if fmt == "pdf"
+            else "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        filename = f"optimized_resume.{ext}"
+        caption = f"📄 Here's your optimized resume ({fmt.upper()})"
+
+        await msg.reply_document(
+            document=res.content,
+            filename=filename,
+            caption=caption,
+        )
+        await status.delete()
+
+    except Exception as e:
+        logger.error(f"Export error: {e}")
+        await status.edit_text(f"❌ Export failed.")
 
 
 async def handle_errors(update: Update, context: ContextTypes.DEFAULT_TYPE):
