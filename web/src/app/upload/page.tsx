@@ -1,5 +1,6 @@
 'use client';
 
+import { track } from "@vercel/analytics";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
@@ -29,6 +30,7 @@ export default function UploadPage() {
       const data = await parseResume(file);
       setResumeText(data.text);
       setIsUploaded(true);
+      track("parse_completed", { format: file.name.split(".").pop() || "unknown" });
     } catch (err: any) {
       setError(err.message || 'Failed to parse resume');
       console.error(err);
@@ -45,6 +47,7 @@ export default function UploadPage() {
     try {
       const data = await analyzeResume(resumeText, jobDescription);
       setAtsReport(data.report);
+      track("analysis_completed", { score: data.report.score });
     } catch (err: any) {
       setError(err.message || 'Analysis failed');
       console.error(err);
@@ -61,7 +64,8 @@ export default function UploadPage() {
     params.set('resume', resumeText);
     params.set('jd', jobDescription);
 
-    router.push(`/optimize?${params.toString()}`);
+      track("optimizer_clicked", { score: atsReport?.score || 0 });
+      router.push(`/optimize?${params.toString()}`);
   };
 
   return (
