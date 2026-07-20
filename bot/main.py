@@ -321,7 +321,8 @@ async def _analyze_and_report(msg, user_data, jd_text: str):
             f"🔴 **Missing ({len(report['missing_keywords'])})**\n{missing}\n\n"
             "💡 **Suggestions**\n"
             + "\n".join([f"• {s}" for s in report["suggestions"][:3]]) + "\n\n"
-            "📎 Reply **optimize** to rewrite your resume for this JD, or send another JD to keep testing."
+            "📎 Reply **optimize** to rewrite your resume for this JD, or send another JD to keep testing.\n\n"
+            "🚀 **Web App** — Full editor + AI optimizer at rezzobot.vercel.app"
         )
         await status_msg.edit_text(msg_text, parse_mode="Markdown")
         user_data["last_jd"] = jd_text
