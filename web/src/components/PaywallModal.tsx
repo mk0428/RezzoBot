@@ -9,7 +9,7 @@ interface PaywallModalProps {
 }
 
 const BASE_CHECKOUT_URL = process.env.NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL || 'https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2';
-const SUCCESS_URL = 'https://rezzobot.mk5188.duckdns.org/?payment=success';
+const SUCCESS_URL = 'https://rezzobot.vercel.app/?payment=success';
 
 function buildCheckoutUrl(type: 'single' | 'monthly' | 'lifetime'): string {
   const params = new URLSearchParams({
