@@ -2,7 +2,7 @@
 
 import { track } from "@vercel/analytics";
 import { useState } from 'react';
-import PaywallModal from '@/components/PaywallModal'; from 'react';
+import PaywallModal from '@/components/PaywallModal';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
