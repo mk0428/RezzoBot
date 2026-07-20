@@ -20,6 +20,13 @@ const posts = [
     date: 'July 20, 2026',
     readTime: '5 min read',
   },
+  {
+    slug: 'ats-score-guide',
+    title: 'ATS Match Score: What\'s a Good Score and How to Improve It',
+    excerpt: 'Learn what an ATS match score means, what score you should aim for, and 5 proven ways to improve your resume score.',
+    date: 'July 20, 2026',
+    readTime: '5 min read',
+  },
 ];
 
 export default function BlogPage() {
