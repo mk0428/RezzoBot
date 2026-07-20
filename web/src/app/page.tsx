@@ -5,17 +5,46 @@ import Footer from "@/components/Footer";
 import FileDropZone from "@/components/FileDropZone";
 import FeatureCards from "@/components/FeatureCards";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Star, ArrowRight, CheckCircle2 } from "lucide-react";
+import { useEffect, useState, Suspense } from "react";
+import { handlePaymentSuccess } from "@/lib/purchase";
 
-export default function LandingPage() {
+function LandingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [paymentStatus, setPaymentStatus] = useState<'success' | 'cancelled' | null>(null);
+
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    const type = searchParams.get('type'); // custom param we add to redirect URL
+
+    if (payment === 'success') {
+      handlePaymentSuccess(type);
+      setPaymentStatus('success');
+      // Clear URL params
+      window.history.replaceState({}, '', '/');
+    } else if (payment === 'cancelled') {
+      setPaymentStatus('cancelled');
+      window.history.replaceState({}, '', '/');
+    }
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col min-h-screen bg-white overflow-x-hidden">
       <Navbar />
 
       <main className="flex-grow">
+        {paymentStatus === 'success' && (
+          <div className="bg-green-600 text-white px-4 py-3 text-center font-bold animate-in slide-in-from-top duration-500">
+            Payment successful! You now have full access to AI optimization and exports.
+          </div>
+        )}
+        {paymentStatus === 'cancelled' && (
+          <div className="bg-amber-500 text-white px-4 py-3 text-center font-bold animate-in slide-in-from-top duration-500">
+            Payment cancelled.
+          </div>
+        )}
         {/* Hero Section */}
         <section className="pt-20 pb-32 px-4">
           <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -127,5 +156,13 @@ export default function LandingPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-gray-400 font-bold">Loading...</div></div>}>
+      <LandingContent />
+    </Suspense>
   );
 }
