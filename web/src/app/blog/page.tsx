@@ -9,7 +9,7 @@ const posts = [
   {
     slug: 'ats-resume-checker',
     title: 'What Is an ATS Resume Checker and Do You Really Need One?',
-    excerpt: "If you have applied to dozens of jobs and never heard back, an ATS resume checker can tell you why. Learn how these tools work and whether you need one.ker can tell you why. Learn how these tools work and whether you need one.',
+    excerpt: 'An ATS resume checker simulates how applicant tracking systems read your resume. Learn how these tools work and whether you need one.',
     date: 'July 20, 2026',
     readTime: '4 min read',
   },
