@@ -93,6 +93,59 @@ function LandingContent() {
           </div>
         </section>
 
+        {/* Telegram Bot Section */}
+        <section className="py-24 px-4 border-b border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+              <div className="space-y-6">
+                <div className="inline-block px-4 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-black uppercase tracking-widest">Telegram Bot</div>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
+                  Check your ATS score on the go
+                </h2>
+                <p className="text-xl text-gray-500 font-medium leading-relaxed">
+                  Use RezzoBot directly on Telegram — send your resume and job description, get your ATS score in seconds. No app install, no signup.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-4">
+                  <a
+                    href="https://t.me/RezzoBot"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-3 bg-blue-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 transition-all shadow-xl shadow-blue-200"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    <span>Try on Telegram</span>
+                  </a>
+                  <span className="inline-flex items-center text-sm text-gray-400 font-medium">
+                    Free · No signup
+                  </span>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50 animate-pulse"></div>
+                <div className="relative bg-white p-6 rounded-3xl border border-gray-100 shadow-2xl">
+                  <div className="flex items-center space-x-3 border-b border-gray-100 pb-4 mb-4">
+                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">R</div>
+                    <div>
+                      <div className="font-bold text-sm text-gray-900">RezzoBot</div>
+                      <div className="text-xs text-gray-400">@RezzoBot</div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-gray-50 rounded-2xl p-4 text-sm text-gray-700 font-medium">
+                      Send me your resume and job description — I'll analyze it for ATS compatibility.
+                    </div>
+                    <div className="flex justify-end">
+                      <div className="bg-blue-500 text-white rounded-2xl rounded-br-sm p-4 text-sm max-w-[80%]">
+                        Your ATS score: <strong>86/100</strong> — missing 3 key keywords from the JD.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Testimonial Section */}
         <section className="py-24 px-4 overflow-hidden">
           <div className="max-w-7xl mx-auto">

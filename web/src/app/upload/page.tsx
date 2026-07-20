@@ -9,7 +9,7 @@ import FileDropZone from '@/components/FileDropZone';
 import ATSScorePanel from '@/components/ATSScorePanel';
 import { ATSReport } from '@/types/resume';
 import { parseResume, analyzeResume } from '@/lib/api';
-import { FileText, Target, BarChart3, Edit3, Save, Sparkles, AlertCircle, ArrowLeft } from 'lucide-react';
+import { FileText, Target, BarChart3, Edit3, Save, Sparkles, AlertCircle, ArrowLeft, Send } from 'lucide-react';
 
 export default function UploadPage() {
   const router = useRouter();
@@ -108,6 +108,19 @@ export default function UploadPage() {
                 </div>
               )}
               <FileDropZone onFileSelect={handleFileSelect} isLoading={isLoading} />
+
+              <div className="pt-6 border-t border-gray-100">
+                <p className="text-sm text-gray-400 font-medium mb-3">Or use RezzoBot on Telegram</p>
+                <a
+                  href="https://t.me/RezzoBot"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 bg-blue-500 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-blue-200"
+                >
+                  <Send size={16} />
+                  <span>Try @RezzoBot on Telegram</span>
+                </a>
+              </div>
             </div>
           </div>
         ) : (
