@@ -38,7 +38,7 @@ export default function FileDropZone({ onFileSelect, isLoading }: FileDropZonePr
         className={`relative group border-2 border-dashed rounded-2xl p-12 transition-all cursor-pointer text-center
           ${isDragActive ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50'}`}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} style={{ display: 'none' }} />
 
         <div className="flex flex-col items-center justify-center space-y-4">
           <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center group-hover:bg-blue-100 transition-colors">
