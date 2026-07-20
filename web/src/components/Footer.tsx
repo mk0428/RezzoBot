@@ -7,6 +7,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Product</h3>
             <ul className="space-y-2">
               <li><a href="/upload" className="text-gray-500 hover:text-blue-600 text-sm">ATS Scanner</a></li>
+              <li><a href="/blog" className="text-gray-500 hover:text-blue-600 text-sm">Blog</a></li>
             </ul>
           </div>
           <div>

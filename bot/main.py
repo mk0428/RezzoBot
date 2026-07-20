@@ -4,6 +4,8 @@ RezzoBot — AI-Native Telegram Bot, fully conversational
 import os
 import logging
 import httpx
+import time
+from datetime import datetime, timezone
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
@@ -287,6 +289,20 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def _analyze_and_report(msg, user_data, jd_text: str):
     """Run ATS analysis on resume + JD text, display report, offer optimize."""
+    # Daily limit check (1 free analysis per day)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    user_id = msg.from_user.id
+    last_analysis_date = _user_analysis_daily.get(user_id)
+    if last_analysis_date == today:
+        await msg.reply_text(
+            "🛑 **Daily limit reached**\n\n"
+            "You have used your free analysis for today. Come back tomorrow for another free check, or use the Web App for unlimited access.\n\n"
+            "🚀 **Web App** — rezzobot.vercel.app\n"
+            "💎 **Unlock unlimited analyses** — rezzobot.vercel.app/upload"
+        )
+        return
+    _user_analysis_daily[user_id] = today
+
     resume_text = user_data.get("resume_text", "")
     if not resume_text:
         await msg.reply_text("❌ No resume found. Please upload one first.")

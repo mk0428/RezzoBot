@@ -2,6 +2,7 @@
 
 import { track } from "@vercel/analytics";
 import { useState } from 'react';
+import PaywallModal from '@/components/PaywallModal'; from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -21,6 +22,7 @@ export default function UploadPage() {
   const [atsReport, setAtsReport] = useState<ATSReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState('resume.pdf');
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const handleFileSelect = async (file: File) => {
     setIsLoading(true);
@@ -39,8 +41,27 @@ export default function UploadPage() {
     }
   };
 
+  function getDailyAnalysisCount(): number {
+    if (typeof window === 'undefined') return 0;
+    const today = new Date().toISOString().split('T')[0];
+    const stored = localStorage.getItem('_rezzobot_analysis_date');
+    if (stored !== today) {
+      localStorage.setItem('_rezzobot_analysis_date', today);
+      localStorage.setItem('_rezzobot_analysis_count', '0');
+      return 0;
+    }
+    return parseInt(localStorage.getItem('_rezzobot_analysis_count') || '0', 10);
+  }
+
   const handleRunAnalysis = async () => {
     if (!resumeText || !jobDescription) return;
+
+    // Check daily limit (1 free analysis per day)
+    const dailyCount = getDailyAnalysisCount();
+    if (dailyCount >= 1) {
+      setShowPaywall(true);
+      return;
+    }
 
     setIsAnalyzing(true);
     setError(null);
@@ -48,6 +69,8 @@ export default function UploadPage() {
       const data = await analyzeResume(resumeText, jobDescription);
       setAtsReport(data.report);
       track("analysis_completed", { score: data.report.score });
+      // Increment daily count
+      localStorage.setItem('_rezzobot_analysis_count', String(dailyCount + 1));
     } catch (err: any) {
       setError(err.message || 'Analysis failed');
       console.error(err);
@@ -209,6 +232,8 @@ export default function UploadPage() {
           </div>
         )}
       </main>
+
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
       {!isUploaded && <Footer />}
     </div>

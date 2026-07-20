@@ -23,6 +23,7 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-8">
             <Link href="/upload" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">ATS Scanner</Link>
+            <Link href="/blog" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Blog</Link>
             
             
             <Link href="https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2" target="_blank" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Pricing</Link>
@@ -50,6 +51,7 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden bg-white border-b border-gray-100 px-4 py-4 space-y-4">
           <Link href="/upload" className="block text-base font-medium text-gray-600">ATS Scanner</Link>
+              <Link href="/blog" className="block text-base font-medium text-gray-600">Blog</Link>
           
           
           <Link href="https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2" target="_blank" className="block text-base font-medium text-gray-600">Pricing</Link>
