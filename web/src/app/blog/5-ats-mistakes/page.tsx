@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: '5 Common ATS Resume Mistakes That Cost You Interviews | RezzoBot',
-  description: 'Avoid these 5 ATS resume mistakes that prevent your application from reaching human recruiters. Fix them and improve your interview rate.',
+  description: 'Avoid these 5 ATS resume mistakes that keep your resume from standing out to recruiters. Fix them and improve your interview rate.',
   openGraph: {
     title: '5 Common ATS Resume Mistakes That Cost You Interviews',
     description: 'Avoid these 5 ATS resume mistakes and improve your interview rate.',

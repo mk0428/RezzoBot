@@ -24,11 +24,11 @@ export default function PostPage() {
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
-            If you have applied to more than a handful of jobs online and never heard back, the problem might not be your qualifications — it might be that a machine never passed your resume to a human.
+            If you have applied to more than a handful of jobs online and never heard back,            the problem might not be your qualifications — it might be that your resume didn't stand out in the recruiter's list.
           </p>
 
           <p>
-            That machine is called an <strong>Applicant Tracking System (ATS)</strong>, and roughly 75% of large companies and 50% of mid-size companies use one to filter resumes before they reach a recruiter.
+            That machine is called an <strong>Applicant Tracking System (ATS)</strong>, and roughly 75% of large companies and 50% of mid-size companies use one to help recruiters scan resumes faster.
           </p>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">What is an ATS Resume Checker?</h2>
@@ -39,7 +39,7 @@ export default function PostPage() {
             <li><strong>Keyword match</strong> — Does your resume contain terms from the job description?</li>
             <li><strong>Format compatibility</strong> — Can the ATS parse your resume structure?</li>
             <li><strong>Content quality</strong> — Do you have quantified achievements and consistent formatting?</li>
-            <li><strong>Overall score</strong> — How likely is your resume to pass through ATS filters?</li>
+            <li><strong>Overall score</strong> — How likely is your resume to rank well in ATS scans?</li>
           </ul>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">Do You Really Need One?</h2>
@@ -72,7 +72,7 @@ export default function PostPage() {
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">Common ATS Myths</h2>
           <h3 className="text-lg font-bold text-gray-900 mt-6">Myth: ATS systems reject 90% of resumes</h3>
           <p>
-            That number gets thrown around a lot but it is misleading. What actually happens is that most resumes are not optimized for the specific role, so they rank lower. The ATS presents a ranked list — the bottom ones simply never get reviewed.
+            That number gets thrown around a lot but it is misleading. What actually happens is recruiters scroll through a compact list of candidates. If your resume doesn't have the right keywords prominently displayed, it simply doesn't catch their attention — so they scroll past it.
           </p>
           <h3 className="text-lg font-bold text-gray-900 mt-6">Myth: Use a plain-text resume to pass ATS</h3>
           <p>

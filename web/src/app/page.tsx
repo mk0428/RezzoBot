@@ -64,7 +64,7 @@ function LandingContent() {
             </h1>
 
             <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
-              The smartest way to build a resume. RezzoBot helps you create a professional resume that gets past ATS and lands you more interviews.
+                RezzoBot helps your resume get noticed by recruiters.
             </p>
 
             <div className="pt-8">
