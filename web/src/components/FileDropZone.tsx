@@ -20,7 +20,7 @@ export default function FileDropZone({ onFileSelect, isLoading }: FileDropZonePr
     }
   }, [onFileSelect]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: {
       'application/pdf': ['.pdf'],
@@ -55,7 +55,10 @@ export default function FileDropZone({ onFileSelect, isLoading }: FileDropZonePr
           </div>
 
           {!file && (
-            <button className="mt-4 bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200/50">
+            <button
+              onClick={open}
+              className="mt-4 bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200/50 cursor-pointer"
+            >
               Score resume
             </button>
           )}

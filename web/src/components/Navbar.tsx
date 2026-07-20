@@ -22,12 +22,12 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="#" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Product</Link>
-            <Link href="#" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Templates</Link>
-            <Link href="#" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Resources</Link>
-            <Link href="#" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Pricing</Link>
+            <Link href="/upload" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">ATS Scanner</Link>
+            
+            
+            <Link href="https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2" target="_blank" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Pricing</Link>
             <div className="flex items-center space-x-4 pl-4 border-l border-gray-100">
-              <Link href="#" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Login</Link>
+              
               <Link href="/upload" className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm">
                 Try for free
               </Link>
@@ -49,12 +49,12 @@ export default function Navbar() {
       {/* Mobile Nav */}
       {isOpen && (
         <div className="md:hidden bg-white border-b border-gray-100 px-4 py-4 space-y-4">
-          <Link href="#" className="block text-base font-medium text-gray-600">Product</Link>
-          <Link href="#" className="block text-base font-medium text-gray-600">Templates</Link>
-          <Link href="#" className="block text-base font-medium text-gray-600">Resources</Link>
-          <Link href="#" className="block text-base font-medium text-gray-600">Pricing</Link>
+          <Link href="/upload" className="block text-base font-medium text-gray-600">ATS Scanner</Link>
+          
+          
+          <Link href="https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2" target="_blank" className="block text-base font-medium text-gray-600">Pricing</Link>
           <div className="pt-4 border-t border-gray-100 flex flex-col space-y-4">
-            <Link href="#" className="text-base font-medium text-gray-600 text-center">Login</Link>
+            
             <Link href="/upload" className="bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold text-center">
               Try for free
             </Link>
