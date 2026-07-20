@@ -1,6 +1,5 @@
 'use client';
 
-import { track } from "@vercel/analytics";
 import { useState } from 'react';
 import PaywallModal from '@/components/PaywallModal';
 import { useRouter } from 'next/navigation';
@@ -32,7 +31,6 @@ export default function UploadPage() {
       const data = await parseResume(file);
       setResumeText(data.text);
       setIsUploaded(true);
-      track("parse_completed", { format: file.name.split(".").pop() || "unknown" });
     } catch (err: any) {
       setError(err.message || 'Failed to parse resume');
       console.error(err);
@@ -68,7 +66,6 @@ export default function UploadPage() {
     try {
       const data = await analyzeResume(resumeText, jobDescription);
       setAtsReport(data.report);
-      track("analysis_completed", { score: data.report.score });
       // Increment daily count
       localStorage.setItem('_rezzobot_analysis_count', String(dailyCount + 1));
     } catch (err: any) {
@@ -87,7 +84,6 @@ export default function UploadPage() {
     params.set('resume', resumeText);
     params.set('jd', jobDescription);
 
-      track("optimizer_clicked", { score: atsReport?.score || 0 });
       router.push(`/optimize?${params.toString()}`);
   };
 
