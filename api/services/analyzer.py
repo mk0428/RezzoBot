@@ -1,3 +1,4 @@
+"""Resume analyzer — DeepSeek-powered ATS match with structured, actionable suggestions."""
 import os
 import json
 import logging
@@ -6,7 +7,6 @@ from typing import List, Dict, Any
 
 logger = logging.getLogger(__name__)
 
-# DeepSeek API 配置
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 
@@ -14,10 +14,8 @@ client = None
 if DEEPSEEK_API_KEY:
     client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
 
+
 def extract_keywords(jd_text: str) -> List[str]:
-    """
-    使用 DeepSeek 从 JD 文本中提取核心技能关键词。
-    """
     if not client:
         logger.error("DeepSeek API key not configured")
         return []
@@ -46,23 +44,20 @@ JD content:
         logger.error(f"Error calling DeepSeek API for keywords: {e}")
         return []
 
+
 def ats_match(resume_text: str, jd_text: str) -> Dict[str, Any]:
-    """
-    使用 DeepSeek 对比简历和 JD，进行 ATS 匹配分析。
-    """
     if not client:
         logger.error("DeepSeek API key not configured")
         return {
             "score": 0,
             "matched_keywords": [],
             "missing_keywords": [],
-            "suggestions": ["API key not configured"],
-            "match_detail": "DeepSeek API key missing"
+            "suggestions": [],
+            "match_detail": "API key not configured",
         }
 
-    prompt = f"""
-You are a professional ATS (Applicant Tracking System) expert.
-Compare the following resume and job description (JD) and provide a matching analysis report.
+    prompt = f"""You are a professional ATS (Applicant Tracking System) expert.
+Compare the following resume and job description (JD) and provide a structured matching analysis.
 
 Resume:
 ---
@@ -74,33 +69,72 @@ JD:
 {jd_text}
 ---
 
-Return the analysis as JSON with these fields:
-- score: match score (integer 0-100)
-- matched_keywords: list of keywords from JD that are present in the resume
-- missing_keywords: list of keywords from JD that are missing from the resume
-- suggestions: improvement suggestions in English (list of strings)
-- match_detail: brief match summary in English
+Return ONLY valid JSON with these fields:
 
-IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text.
-"""
+{{
+  "score": <integer 0-100>,
+  "matched_keywords": [<list of keywords from JD that appear in resume>],
+  "missing_keywords": [<list of keywords from JD that are missing from resume>],
+  "match_detail": "<one-sentence match summary>",
+  "suggestions": [
+    {{
+      "section": "<resume section name: Summary | Experience - [job title] | Skills | Education | Certifications>",
+      "issue": "<what's wrong in one sentence>",
+      "evidence": "<exact quote from resume + exact quote from JD showing the gap>",
+      "suggested_fix": "<specific, actionable rewrite suggestion. If the fix changes a specific word/phrase, show before→after. If adding content, specify exactly where.>"
+    }}
+  ],
+  "quick_wins": [
+    {{
+      "change": "<exact word or phrase to change>",
+      "from": "<current text>",
+      "to": "<suggested replacement text>",
+    }}
+  ]
+}}
+
+RULES for suggestions:
+1. Each suggestion MUST reference a SPECIFIC part of the resume (section name, approximate location)
+2. Each suggestion MUST show evidence from BOTH the resume AND the JD
+3. suggested_fix must be so specific the user can immediately act on it — word-level changes preferred
+4. Aim for 3-5 suggestions total, prioritized by impact
+5. quick_wins: list 2-3 single-word or single-phrase replacements that would immediately improve the score
+6. Do NOT suggest fabricating experience — only suggest rewording what exists
+7. Do NOT suggest adding skills the user clearly doesn't have
+
+IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text."""
 
     try:
         response = client.chat.completions.create(
             model="deepseek-v4-flash",
             messages=[
-                {"role": "system", "content": "You are a resume analysis expert. Output ONLY valid JSON."},
+                {"role": "system", "content": "You are a resume analysis expert. Output ONLY valid JSON with structured, specific suggestions."},
                 {"role": "user", "content": prompt}
             ],
-            stream=False
+            stream=False,
+            temperature=0.3,
         )
         content = response.choices[0].message.content
-        # 尝试清理可能的 markdown 代码块包装
+
+        # Clean markdown code blocks if present
         if "```json" in content:
             content = content.split("```json")[1].split("```")[0].strip()
         elif "```" in content:
             content = content.split("```")[1].split("```")[0].strip()
 
         result = json.loads(content)
+
+        # Ensure backward compatibility with bot code that expects flat suggestions list
+        if "suggestions" in result and isinstance(result["suggestions"], list):
+            # Convert structured suggestions to flat strings for backward compat
+            flat_suggestions = []
+            for s in result["suggestions"]:
+                if isinstance(s, dict):
+                    flat_suggestions.append(f"[{s.get('section', 'General')}] {s.get('issue', '')} — {s.get('suggested_fix', '')}")
+                else:
+                    flat_suggestions.append(str(s))
+            result["suggestions_flat"] = flat_suggestions
+
         return result
     except Exception as e:
         logger.error(f"Error calling DeepSeek API for ATS match: {e}")
@@ -108,6 +142,8 @@ IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text.
             "score": 0,
             "matched_keywords": [],
             "missing_keywords": [],
-            "suggestions": [f"Error: {str(e)}"],
-            "match_detail": "Analysis failed"
+            "suggestions": [],
+            "suggestions_flat": [f"Analysis failed: {str(e)[:100]}"],
+            "match_detail": "Analysis failed",
+            "quick_wins": [],
         }

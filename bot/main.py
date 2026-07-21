@@ -328,6 +328,30 @@ async def _analyze_and_report(msg, user_data, jd_text: str):
         matched = " · ".join(report["matched_keywords"]) if report["matched_keywords"] else "None"
         missing = " · ".join(report["missing_keywords"]) if report["missing_keywords"] else "None"
 
+        # Build structured suggestions display
+        structured = report.get("suggestions_structured", [])
+        if structured:
+            suggestions_display = []
+            for s in structured[:4]:
+                section = s.get("section", "General")
+                issue = s.get("issue", "")
+                fix = s.get("suggested_fix", "")
+                suggestions_display.append(f"📋 **{section}**\n{issue}\n→ {fix}")
+            suggestions_block = "\n\n".join(suggestions_display)
+        else:
+            # Fallback to flat suggestions
+            flat = report.get("suggestions", [])
+            suggestions_block = "\n".join([f"• {s}" for s in flat[:4]])
+
+        # Quick wins
+        quick_wins = report.get("quick_wins", [])
+        quick_wins_block = ""
+        if quick_wins:
+            qw_lines = []
+            for qw in quick_wins[:3]:
+                qw_lines.append(f"• \"{qw.get('from_text', '')}\" → \"{qw.get('to_text', '')}\"")
+            quick_wins_block = "\n\n⚡ **Quick Wins**\n" + "\n".join(qw_lines)
+
         msg_text = (
             f"{header}\n"
             "═══════════════\n"
@@ -335,8 +359,8 @@ async def _analyze_and_report(msg, user_data, jd_text: str):
             f"Match Score: **{report['score']}/100**\n\n"
             f"✅ **Matched ({len(report['matched_keywords'])})**\n{matched}\n\n"
             f"🔴 **Missing ({len(report['missing_keywords'])})**\n{missing}\n\n"
-            "💡 **Suggestions**\n"
-            + "\n".join([f"• {s}" for s in report["suggestions"][:3]]) + "\n\n"
+            f"💡 **Suggestions**\n{suggestions_block}\n"
+            f"{quick_wins_block}\n\n"
             "📎 Reply **optimize** to rewrite your resume for this JD, or send another JD to keep testing.\n\n"
             "🚀 **Web App** — Full editor + AI optimizer at rezzobot.com"
         )

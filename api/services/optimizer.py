@@ -28,19 +28,22 @@ def optimize_resume(resume_text: str, jd_text: str) -> Dict[str, Any]:
             "score_improvement": 0,
         }
 
-    prompt = f"""You are a professional resume optimization expert. Rewrite the following resume to better target the specific job description.
+    prompt = f"""You are a professional resume optimization coach. Your job is to show the user HOW to improve their resume — not to write it for them.
+
+For each section of the resume, provide SPECIFIC, ACTIONABLE rewrite suggestions that the user can apply themselves.
 
 STRICT RULES:
 1. Keep ALL original facts — do NOT invent experience, skills, education, or credentials
-2. Reword bullet points to highlight relevant experience for the JD
-3. Inject missing keywords from the JD where they naturally fit into existing experience
-4. Improve formatting: use strong action verbs, quantify achievements where possible
-5. Keep the same section structure (summary, experience, education, skills)
-6. Output must sound natural to a human recruiter — no keyword stuffing
+2. For each suggestion, show the before→after so the user can see exactly what changed
+3. Explain WHY each change improves the ATS match (e.g., "This adds the keyword 'cross-functional' which appears 3 times in the JD")
+4. Only suggest changes based on what's in the JD — never fabricate qualifications
+5. Group suggestions by resume section (Summary, Experience, Skills, Education)
+6. Note high-impact changes vs. nice-to-have changes
 
 Return ONLY valid JSON with these fields:
-- optimized_text: the full rewritten resume (plain text, same structure as input)
-- change_log: list of specific changes made (e.g., "Reworded summary to emphasize leadership experience", "Added 'Python' to skills section")
+- optimized_text: a version of the resume WITH the changes applied (so user sees the end result)
+- section_suggestions: list of {{"section": "...", "before": "...", "after": "...", "reason": "...", "impact": "high|medium|low"}}
+- change_log: list of specific changes made (e.g., "Reworded summary to emphasize 'cross-functional leadership' matching JD paragraph 2")
 - score_improvement: estimated ATS score improvement (integer 0-30)
 
 Resume:

@@ -35,11 +35,35 @@ async def analyze_resume(request: AnalyzeRequest):
     result = ats_match(request.resume_text, request.jd_text)
 
     try:
+        # Build structured suggestions list
+        structured = result.get("suggestions", [])
+        suggestions_structured = []
+        for s in structured:
+            if isinstance(s, dict):
+                suggestions_structured.append({
+                    "section": s.get("section", ""),
+                    "issue": s.get("issue", ""),
+                    "evidence": s.get("evidence", ""),
+                    "suggested_fix": s.get("suggested_fix", ""),
+                })
+
+        # Flat suggestions for backward compatibility
+        flat_suggestions = result.get("suggestions_flat", [])
+        if not flat_suggestions and structured:
+            flat_suggestions = [
+                f"[{s.get('section', 'General')}] {s.get('issue', '')} — {s.get('suggested_fix', '')}"
+                for s in structured if isinstance(s, dict)
+            ]
+
+        quick_wins = result.get("quick_wins", [])
+
         report = ATSReport(
             score=result.get("score", 0),
             matched_keywords=result.get("matched_keywords", []),
             missing_keywords=result.get("missing_keywords", []),
-            suggestions=result.get("suggestions", []),
+            suggestions=flat_suggestions or result.get("suggestions", []),
+            suggestions_structured=suggestions_structured,
+            quick_wins=quick_wins,
             match_detail=result.get("match_detail", "Analysis completed")
         )
         return AnalyzeResponse(report=report)
@@ -71,6 +95,8 @@ async def optimize_resume_endpoint(request: OptimizeRequest):
     return OptimizeResponse(
         optimized_resume=optimized_resume,
         change_log=result.get("change_log", ["Optimization completed"]),
+        section_suggestions=result.get("section_suggestions", []),
+        score_improvement=result.get("score_improvement", 0),
     )
 
 

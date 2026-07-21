@@ -41,11 +41,26 @@ class AnalyzeRequest(BaseModel):
     jd_text: str
 
 
+class Suggestion(BaseModel):
+    section: str = ""
+    issue: str = ""
+    evidence: str = ""
+    suggested_fix: str = ""
+
+
+class QuickWin(BaseModel):
+    change: str = ""
+    from_text: str = ""
+    to_text: str = ""
+
+
 class ATSReport(BaseModel):
     score: int
     matched_keywords: List[str]
     missing_keywords: List[str]
-    suggestions: List[str]
+    suggestions: List[str] = []
+    suggestions_structured: List[Suggestion] = []
+    quick_wins: List[QuickWin] = []
     match_detail: str
 
 
@@ -72,6 +87,16 @@ class OptimizeRequest(BaseModel):
     sections: List[str] = ["summary", "experiences", "skills"]
 
 
+class SectionSuggestion(BaseModel):
+    section: str = ""
+    before: str = ""
+    after: str = ""
+    reason: str = ""
+    impact: str = "medium"
+
+
 class OptimizeResponse(BaseModel):
     optimized_resume: Resume
-    change_log: List[str]
+    change_log: List[str] = []
+    section_suggestions: List[SectionSuggestion] = []
+    score_improvement: int = 0
