@@ -57,7 +57,7 @@ function LandingContent() {
               <span className="text-sm font-bold text-blue-900 tracking-tight">4.7/5.0 • 4.5 million users</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
               Your Resume, Your Story.<br />
               <span className="text-blue-600">Check, Score & Optimize</span>{' '}
               Before You Apply
@@ -90,7 +90,7 @@ function LandingContent() {
             </div>
 
             <div className="bg-white rounded-3xl p-10 md:p-14 shadow-lg border border-gray-100 text-left space-y-6">
-              <p className="text-xl text-gray-700 leading-relaxed font-medium">
+              <p className="text-lg md:text-xl text-gray-700 leading-relaxed font-medium">
                 "After conducting countless interviews, I noticed a troubling trend — candidates who couldn&apos;t explain their own resumes. AI tools had written their stories for them, leaving them unprepared when it mattered most."
               </p>
 
