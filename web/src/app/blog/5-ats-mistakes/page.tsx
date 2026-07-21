@@ -35,7 +35,7 @@ const faqSchema = {
       name: 'Can ATS systems detect lies on a resume?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'ATS systems don't detect lies directly, but they flag inconsistencies in dates, job titles, and formatting that may indicate copied or fabricated content. More importantly, if AI wrote your resume, you won't be able to explain the details in an interview.'
+        text: 'ATS systems do not detect lies directly, but they flag inconsistencies in dates, job titles, and formatting. If AI wrote your resume, you will not be able to explain the details in an interview.'
       }
     }
   ]
