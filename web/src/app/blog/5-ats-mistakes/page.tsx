@@ -3,24 +3,59 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: '5 Common ATS Resume Mistakes That Cost You Interviews | RezzoBot',
-  description: 'Avoid these 5 ATS resume mistakes that keep your resume from standing out to recruiters. Fix them and improve your interview rate.',
+  description: 'Avoid these 5 ATS resume mistakes that keep your resume from standing out to recruiters. Fix them and improve your interview rate. Free ATS checker included.',
   openGraph: {
     title: '5 Common ATS Resume Mistakes That Cost You Interviews',
     description: 'Avoid these 5 ATS resume mistakes and improve your interview rate.',
   },
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the most common ATS resume mistake?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Using the wrong format is the #1 reason resumes fail ATS parsing. Two-column layouts, tables, text boxes, and embedded graphics confuse ATS parsers. Stick to a simple single-column layout with standard section headers.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I check if my resume passes ATS?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The fastest way is to run it through a free ATS checker like RezzoBot. It compares your resume against any job description and gives you a match score, showing exactly which keywords match and which are missing.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Can ATS systems detect lies on a resume?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'ATS systems don't detect lies directly, but they flag inconsistencies in dates, job titles, and formatting that may indicate copied or fabricated content. More importantly, if AI wrote your resume, you won't be able to explain the details in an interview.'
+      }
+    }
+  ]
+};
+
 export default function PostPage() {
   return (
     <div className="min-h-screen bg-white">
       <article className="max-w-2xl mx-auto px-4 py-20">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
         <div className="mb-8">
           <Link href="/blog" className="text-blue-600 font-bold text-sm hover:underline">← Back to Blog</Link>
         </div>
         <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-4">
           5 Common ATS Resume Mistakes That Cost You Interviews
         </h1>
-        <div className="text-sm text-gray-400 font-medium mb-8">July 20, 2026 · 5 min read</div>
+        <div className="text-sm text-gray-400 font-medium mb-8">July 20, 2026 · Updated July 21, 2026 · 5 min read</div>
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
@@ -62,6 +97,24 @@ export default function PostPage() {
           </p>
           <p>And it is free for one analysis per day — no credit card, no signup required.</p>
 
+          <div className="mt-12 space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-xl p-5">
+                <p className="font-bold text-gray-900">What is the most common ATS resume mistake?</p>
+                <p className="text-gray-600 mt-1 text-sm">Wrong format. Two-column layouts, tables, and graphics confuse ATS parsers. Use a simple single-column layout.</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-5">
+                <p className="font-bold text-gray-900">How do I check if my resume passes ATS?</p>
+                <p className="text-gray-600 mt-1 text-sm">Run it through a free ATS checker like <Link href="/" className="text-blue-600 hover:underline">RezzoBot</Link>. It shows your match score and exactly which keywords from the job description you're missing.</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-5">
+                <p className="font-bold text-gray-900">Can ATS detect AI-written resumes?</p>
+                <p className="text-gray-600 mt-1 text-sm">ATS doesn't detect AI content directly, but inconsistency in formatting and vague bullet points are red flags. The real problem: if AI wrote it, you won't be able to explain it in an interview.</p>
+              </div>
+            </div>
+          </div>
+
           <div className="mt-12 p-6 bg-blue-50 rounded-2xl border border-blue-100">
             <p className="font-bold text-gray-900">Check your resume for ATS issues</p>
             <p className="text-gray-600 mt-1">Get your free ATS score in under 30 seconds.</p>
@@ -71,6 +124,14 @@ export default function PostPage() {
             >
               Run Free ATS Check
             </a>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <p className="text-sm text-gray-500 font-medium">
+              📖 Related: <Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score Guide</Link>
+              {' · '}
+              <Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker?</Link>
+            </p>
           </div>
         </div>
       </article>

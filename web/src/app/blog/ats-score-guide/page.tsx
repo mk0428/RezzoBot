@@ -3,24 +3,59 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'ATS Match Score: What\'s a Good Score and How to Improve It | RezzoBot',
-  description: 'Learn what an ATS match score means, what score you should aim for, and 5 proven ways to improve your resume score.',
+  description: 'Learn what an ATS match score means, what score you should aim for, and 5 proven ways to improve your resume score. Free ATS checker included.',
   openGraph: {
     title: 'ATS Match Score: What\'s a Good Score and How to Improve It',
     description: 'Learn what ATS score you need and how to improve it.',
   },
 };
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is a good ATS match score?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A score of 80-100 is considered a strong match. Scores in this range mean your resume covers most keywords from the job description and is well-formatted for ATS parsing. Scores of 60-79 need work, and below 60 indicates significant gaps or formatting issues.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Can ATS systems reject my resume?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'ATS systems typically don\'t reject resumes outright. Instead, they rank and sort resumes by keyword match, then present a compact list to recruiters. A low match score means recruiters are less likely to click on your resume, not that it\'s automatically rejected.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'How can I improve my ATS score fast?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The fastest way is to mirror the exact keywords from the job description in your resume. Also create a dedicated skills section, quantify your achievements with numbers, and use standard section headers like Experience, Education, and Skills.'
+      }
+    }
+  ]
+};
+
 export default function PostPage() {
   return (
     <div className="min-h-screen bg-white">
       <article className="max-w-2xl mx-auto px-4 py-20">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
         <div className="mb-8">
           <Link href="/blog" className="text-blue-600 font-bold text-sm hover:underline">← Back to Blog</Link>
         </div>
         <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-4">
           ATS Match Score: What's a Good Score and How to Improve It
         </h1>
-        <div className="text-sm text-gray-400 font-medium mb-8">July 20, 2026 · 5 min read</div>
+        <div className="text-sm text-gray-400 font-medium mb-8">July 20, 2026 · Updated July 21, 2026 · 5 min read</div>
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
@@ -120,6 +155,25 @@ export default function PostPage() {
             <em>Quick note from a former HR professional: I've seen candidates with 95+ ATS scores fail interviews because they couldn't explain the "achievements" an AI wrote for them. Use ATS tools to optimize your format and keywords. But make sure every bullet point on your resume reflects work you actually did and can talk about naturally.</em>
           </p>
 
+          <div className="mt-12 space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-xl p-5">
+                <p className="font-bold text-gray-900">What is a good ATS match score?</p>
+                <p className="text-gray-600 mt-1 text-sm">80-100 is strong. 60-79 needs work. Below 60 has major gaps. Most competitive roles require 80+ to get noticed.</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-5">
+                <p className="font-bold text-gray-900">Can ATS systems reject my resume?</p>
+                <p className="text-gray-600 mt-1 text-sm">No, ATS doesn't reject resumes. It ranks them by keyword match. A low score means recruiters are less likely to see your resume, not that it's automatically rejected.</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-5">
+                <p className="font-bold text-gray-900">How can I improve my ATS score fast?</p>
+                <p className="text-gray-600 mt-1 text-sm">Mirror the JD keywords, create a skills section, quantify achievements with numbers, and use standard section headers. Running your resume through a free ATS checker like <Link href="https://rezzobot.com" className="text-blue-600 hover:underline">RezzoBot</Link> shows exactly what to fix.</p>
+              </div>
+            </div>
+          </div>
+
           <div className="mt-12 p-6 bg-blue-50 rounded-2xl border border-blue-100">
             <p className="font-bold text-gray-900">Want to know your ATS score?</p>
             <p className="text-gray-600 mt-1">
@@ -131,6 +185,14 @@ export default function PostPage() {
             >
               Check Your Resume Free
             </a>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <p className="text-sm text-gray-500 font-medium">
+              📖 Related: <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Resume Mistakes That Cost You Interviews</Link>
+              {' · '}
+              <Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker?</Link>
+            </p>
           </div>
         </div>
       </article>
