@@ -59,7 +59,7 @@ function LandingContent() {
 
             <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
               Your Resume, Your Story.<br />
-              <span className="text-blue-600">Check, Score & Optimize</span>
+              <span className="text-blue-600">Check, Score & Optimize</span>{' '}
               Before You Apply
             </h1>
 
