@@ -58,13 +58,13 @@ function LandingContent() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
-              Free AI Resume Builder. <br />
-              <span className="text-blue-600">Build, improve, & score </span>
-              your resume
+              Your Resume, Your Story.<br />
+              <span className="text-blue-600">Check, Score & Optimize</span>
+              Before You Apply
             </h1>
 
             <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
-                RezzoBot helps your resume get noticed by recruiters.
+              We don't write your resume for you. We analyze it, score it, and show you what's missing — so you can fix it yourself and actually own your story.
             </p>
 
             <div className="pt-8">
@@ -78,6 +78,38 @@ function LandingContent() {
               <div className="text-xl font-bold">Meta</div>
               <div className="text-xl font-bold">Apple</div>
               <div className="text-xl font-bold">Netflix</div>
+            </div>
+          </div>
+        </section>
+
+        {/* Philosophy / CEO Section */}
+        <section className="py-24 px-4 bg-gradient-to-b from-white to-blue-50/30">
+          <div className="max-w-3xl mx-auto text-center space-y-8">
+            <div className="inline-block px-4 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-black uppercase tracking-widest">
+              Our Philosophy
+            </div>
+
+            <div className="bg-white rounded-3xl p-10 md:p-14 shadow-lg border border-gray-100 text-left space-y-6">
+              <p className="text-xl text-gray-700 leading-relaxed font-medium">
+                "After conducting countless interviews, I noticed a troubling trend — candidates who couldn&apos;t explain their own resumes. AI tools had written their stories for them, leaving them unprepared when it mattered most."
+              </p>
+
+              <div className="flex items-center space-x-4 border-t border-gray-100 pt-6">
+                <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">KM</div>
+                <div>
+                  <div className="font-bold text-gray-900">Michael Meng</div>
+                  <div className="text-sm text-gray-500">CEO, RezzoBot</div>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+                <p className="text-amber-900 font-semibold mb-2">⚠️ Our Promise</p>
+                <p className="text-amber-800 text-sm leading-relaxed">
+                  We give you insights, suggestions, and feedback — but we won&apos;t write your resume for you.
+                  Your experiences are yours. Your voice is yours. We just help you present it better.
+                  If you can&apos;t explain every word on your resume in an interview, we haven&apos;t done our job.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -201,10 +233,10 @@ function LandingContent() {
               Ready to land your dream job?
             </h2>
             <p className="text-xl text-blue-100 font-medium opacity-90">
-              Join 4.5 million users who built their careers with our AI tools.
+              Join 4.5 million users who checked and optimized their resumes with RezzoBot.
             </p>
             <Link href="/upload" className="inline-block bg-white text-blue-600 px-10 py-5 rounded-2xl font-black text-lg hover:bg-gray-50 transition-all shadow-xl shadow-blue-900/20">
-              Create your resume for free
+              Check your resume for free
             </Link>
           </div>
         </section>

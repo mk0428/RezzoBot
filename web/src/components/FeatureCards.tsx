@@ -2,8 +2,8 @@ import { FileText, Target, Zap, ChevronRight } from 'lucide-react';
 
 const features = [
   {
-    title: 'Build',
-    description: 'Use our AI-powered resume builder to create a professional resume in minutes.',
+    title: 'Analyze',
+    description: 'Upload your resume and get instant ATS compatibility analysis with detailed, actionable feedback.',
     icon: FileText,
     color: 'bg-blue-50 text-blue-600',
     hoverColor: 'group-hover:bg-blue-100'
