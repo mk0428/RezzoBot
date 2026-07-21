@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: "RezzoBot | Free ATS Resume Checker",
     description:
       "Check your resume's ATS score for free. Get instant keyword matching and AI optimization.",
-    url: "https://rezzobot.vercel.app",
+    url: "https://rezzobot.com",
     siteName: "RezzoBot",
     type: "website",
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://rezzobot.vercel.app",
+    canonical: "https://rezzobot.com",
   },
 };
 
@@ -67,7 +67,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebApplication",
               name: "RezzoBot",
-              url: "https://rezzobot.vercel.app",
+              url: "https://rezzobot.com",
               description:
                 "Free ATS resume checker and AI resume optimizer. Score your resume against any job description.",
               applicationCategory: "Career Development",

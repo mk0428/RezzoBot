@@ -126,7 +126,7 @@ export default function PostPage() {
               Run your resume through RezzoBot's free ATS checker — one free analysis per day, no credit card required. It shows your match score and exactly which keywords from the job description you're missing.
             </p>
             <a
-              href="https://rezzobot.vercel.app/upload"
+              href="https://rezzobot.com/upload"
               className="inline-block mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all"
             >
               Check Your Resume Free

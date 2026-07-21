@@ -66,7 +66,7 @@ export default function PostPage() {
             <p className="font-bold text-gray-900">Check your resume for ATS issues</p>
             <p className="text-gray-600 mt-1">Get your free ATS score in under 30 seconds.</p>
             <a
-              href="https://rezzobot.vercel.app/upload"
+              href="https://rezzobot.com/upload"
               className="inline-block mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all"
             >
               Run Free ATS Check

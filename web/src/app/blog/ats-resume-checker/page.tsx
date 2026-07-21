@@ -89,7 +89,7 @@ export default function PostPage() {
               Run it through RezzoBot free ATS checker — one free analysis per day, no credit card required.
             </p>
             <a
-              href="https://rezzobot.vercel.app/upload"
+              href="https://rezzobot.com/upload"
               className="inline-block mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all"
             >
               Check Your Resume Free

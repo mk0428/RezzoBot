@@ -297,8 +297,8 @@ async def _analyze_and_report(msg, user_data, jd_text: str):
         await msg.reply_text(
             "🛑 **Daily limit reached**\n\n"
             "You have used your free analysis for today. Come back tomorrow for another free check, or use the Web App for unlimited access.\n\n"
-            "🚀 **Web App** — rezzobot.vercel.app\n"
-            "💎 **Unlock unlimited analyses** — rezzobot.vercel.app/upload"
+            "🚀 **Web App** — rezzobot.com\n"
+            "💎 **Unlock unlimited analyses** — rezzobot.com/upload"
         )
         return
     _user_analysis_daily[user_id] = today
@@ -338,7 +338,7 @@ async def _analyze_and_report(msg, user_data, jd_text: str):
             "💡 **Suggestions**\n"
             + "\n".join([f"• {s}" for s in report["suggestions"][:3]]) + "\n\n"
             "📎 Reply **optimize** to rewrite your resume for this JD, or send another JD to keep testing.\n\n"
-            "🚀 **Web App** — Full editor + AI optimizer at rezzobot.vercel.app"
+            "🚀 **Web App** — Full editor + AI optimizer at rezzobot.com"
         )
         await status_msg.edit_text(msg_text, parse_mode="Markdown")
         user_data["last_jd"] = jd_text
