@@ -31,7 +31,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
   const tiers = [
     {
       name: 'Single Optimization',
-      price: '$4.99',
+      price: '$4.9',
       description: 'Perfect for a quick boost',
       icon: <Zap size={24} className="text-blue-500" />,
       features: [
