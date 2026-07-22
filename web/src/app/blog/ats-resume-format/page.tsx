@@ -60,7 +60,7 @@ export default function PostPage() {
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
-            You spent hours tailoring your resume for a dream job. You hit submit. And then — nothing. No rejection, no interview, just silence.
+            To format your resume for ATS in 2026, use a single-column DOCX layout with standard section headers (Experience, Education, Skills), no tables or graphics, and standard fonts like Arial or Calibri at 10-12pt. Avoid PDF unless the job posting specifically requests it, and never use headers, footers, or text boxes. Here is your complete formatting guide.
           </p>
           <p>
             More often than not, the culprit isn't your experience or qualifications. It's how your resume is <strong>formatted</strong>. Applicant Tracking Systems (ATS) parse your resume before it ever reaches human eyes, and if the format isn't compatible, the parser will garble your content or miss critical sections entirely.
@@ -257,9 +257,17 @@ export default function PostPage() {
 
           <div className="mt-8 pt-6 border-t border-gray-100">
             <p className="text-sm text-gray-500 font-medium">
-              📖 Related: <Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score Guide</Link>
+              📖 Related: <Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker</Link>
               {' · '}
-              <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Resume Mistakes That Cost You Interviews</Link>
+              <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Mistakes</Link>
+              {' · '}
+              <Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score Guide</Link>
+              {' · '}
+              <Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Checkers</Link>
+              {' · '}
+              <Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Make Resume Stand Out</Link>
+              {' · '}
+              <Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
             </p>
           </div>
         </div>

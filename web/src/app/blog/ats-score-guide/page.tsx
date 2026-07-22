@@ -60,7 +60,7 @@ export default function PostPage() {
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
-            You uploaded your resume, ran it through an ATS checker, and got a number. Now what?
+            A good ATS match score is 80-100 out of 100. Scores in this range mean your resume covers most keywords from the job description and is well-formatted for automated parsing. Scores of 60-79 need work, and anything below 60 indicates significant gaps or formatting issues. Here is exactly what each score range means and how to improve yours in 5 steps.
           </p>
           <p>
             Is 72 a good score? Do you need 90+ to get an interview? And how do you actually move the needle?
@@ -190,9 +190,12 @@ export default function PostPage() {
 
           <div className="mt-8 pt-6 border-t border-gray-100">
             <p className="text-sm text-gray-500 font-medium">
-              📖 Related: <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Resume Mistakes That Cost You Interviews</Link>
-              {' · '}
-              <Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker?</Link>
+              📖 Related: <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Resume Mistakes That Cost You Interviews</Link>,
+              {' '}<Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker?</Link>,
+              {' '}<Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">ATS Resume Format Guide</Link>,
+              {' '}<Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Checkers</Link>,
+              {' '}<Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Make Resume Stand Out</Link>,
+              {' '}<Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
             </p>
           </div>
         </div>

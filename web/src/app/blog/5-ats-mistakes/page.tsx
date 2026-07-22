@@ -60,7 +60,7 @@ export default function PostPage() {
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
-            You spend hours perfecting your resume. You tailor it to the role. You proofread three times. Then — radio silence. No callback. No rejection. Nothing.
+            Five specific ATS resume mistakes cost most candidates interviews: using the wrong resume format, missing critical keywords from the job description, failing to quantify achievements, inconsistent formatting that confuses parsers, and sending the same generic resume to every employer. Here is how to diagnose and fix each one.
           </p>
           <p>
             If this sounds familiar, you might be making one of these ATS-killing mistakes.
@@ -132,6 +132,14 @@ export default function PostPage() {
               📖 Related: <Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score Guide</Link>
               {' · '}
               <Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker?</Link>
+              {' · '}
+              <Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">ATS Resume Format Guide</Link>
+              {' · '}
+              <Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Checkers</Link>
+              {' · '}
+              <Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Make Resume Stand Out</Link>
+              {' · '}
+              <Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
             </p>
           </div>
         </div>

@@ -60,7 +60,7 @@ export default function PostPage() {
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
-            If you have applied to more than a handful of jobs online and never heard back,            the problem might not be your qualifications — it might be that your resume didn't stand out in the recruiter's list.
+            An ATS resume checker scans your resume against a specific job description and shows you exactly which keywords match and which are missing. If you are applying to companies with 200+ employees, you need one — over 75% of large employers use ATS to filter candidates before a recruiter ever sees a resume. Here is how it works and whether you really need one.
           </p>
 
           <p>
@@ -154,7 +154,15 @@ export default function PostPage() {
             <p className="text-sm text-gray-500 font-medium">
               📖 Related: <Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score Guide</Link>
               {' · '}
-              <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Resume Mistakes</Link>
+              <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Mistakes</Link>
+              {' · '}
+              <Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">ATS Resume Format Guide</Link>
+              {' · '}
+              <Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Checkers</Link>
+              {' · '}
+              <Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Make Resume Stand Out</Link>
+              {' · '}
+              <Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
             </p>
           </div>
         </div>
