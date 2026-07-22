@@ -22,10 +22,24 @@ const posts = [
   },
   {
     slug: 'ats-score-guide',
-    title: 'ATS Match Score: What\'s a Good Score and How to Improve It',
-    excerpt: 'Learn what an ATS match score means, what score you should aim for, and 5 proven ways to improve your resume score.',
+    title: "ATS Match Score: What's a Good Score and How to Improve It",
+    excerpt: "Learn what an ATS match score means, what score you should aim for, and 5 proven ways to improve your resume score.",
     date: 'July 20, 2026',
     readTime: '5 min read',
+  },
+  {
+    slug: 'ats-resume-format',
+    title: 'How to Format Your Resume for ATS in 2026 (A Complete Guide)',
+    excerpt: "PDF vs DOCX? Single column vs multi-column? Learn the exact resume format that passes ATS parsers every time.",
+    date: 'July 22, 2026',
+    readTime: '6 min read',
+  },
+  {
+    slug: 'best-free-ats-checkers',
+    title: 'Best Free ATS Resume Checkers in 2026 — Tested & Compared',
+    excerpt: 'We tested 5 free ATS resume checkers head-to-head. See which one gives you the most actionable feedback for zero dollars.',
+    date: 'July 22, 2026',
+    readTime: '7 min read',
   },
 ];
 
