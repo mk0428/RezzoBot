@@ -23,6 +23,10 @@ export const metadata: Metadata = {
     "resume keyword match",
     "AI resume optimizer",
     "resume analyzer free",
+    "online resume checker",
+    "resume ATS scanner",
+    "check resume for ATS",
+    "optimize resume for job description",
   ],
   openGraph: {
     title: "RezzoBot | Free ATS Resume Checker",
