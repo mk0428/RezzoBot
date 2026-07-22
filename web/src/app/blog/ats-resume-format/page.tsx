@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'How to Format Your Resume for ATS in 2026 (A Complete Guide) | RezzoBot',
   description: 'Learn exactly how to format your resume for ATS in 2026. Covers file formats (PDF vs DOCX vs TXT), fonts, section headers, single vs multi-column layouts, margins, and more.',
-  keywords: ['ATS resume format 2026', 'best resume format for ATS', 'how to format resume for ATS', 'ATS friendly resume template', 'resume file format for ATS', 'should I use PDF for ATS resume', 'single column resume ATS', 'ATS resume formatting tips'],
+  keywords: ['ATS resume format 2026', 'best resume format for ATS', 'how to format resume for ATS', 'ATS friendly resume template', 'resume file format for ATS', 'should I use PDF for ATS resume', 'does resume format matter ATS', 'single column resume ATS', 'ATS resume formatting tips'],
   openGraph: {
     title: 'How to Format Your Resume for ATS in 2026 (A Complete Guide)',
     description: 'The complete guide to ATS-compatible resume formatting — file formats, fonts, layouts, and more.',

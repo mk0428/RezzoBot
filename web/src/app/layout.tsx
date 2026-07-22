@@ -17,16 +17,16 @@ export const metadata: Metadata = {
   description:
     "Check your resume's ATS score for free. Get instant keyword matching against any job description, AI-powered optimization, and export to PDF/DOCX.",
   keywords: [
+    "ATS resume checker",
     "free ATS resume checker",
-    "resume score",
-    "ATS resume test",
-    "resume keyword match",
+    "resume score checker",
+    "resume ai checker",
     "AI resume optimizer",
-    "resume analyzer free",
+    "resume keyword match",
     "online resume checker",
     "resume ATS scanner",
+    "how to make your resume stand out",
     "check resume for ATS",
-    "optimize resume for job description",
   ],
   openGraph: {
     title: "RezzoBot | Free ATS Resume Checker",

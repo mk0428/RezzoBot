@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Best Free ATS Resume Checkers in 2026 — Tested & Compared | RezzoBot',
   description: 'We tested the best free ATS resume checkers head-to-head: RezzoBot, JobScan, ResumeWorded, SkillSyncer, and TopResume. See which free ATS scanner gives you the best actionable feedback.',
-  keywords: ['best free ATS resume checker', 'ATS checker comparison', 'free resume ATS scanner', 'resume checker online free', 'best resume analyzer', 'free ATS resume test', 'compare ATS resume tools', 'resume scoring tool'],
+  keywords: ['best free ATS resume checker', 'Rezi vs Jobscan vs Teal', 'ATS checker comparison', 'free resume ATS scanner', 'resume checker online free', 'best resume analyzer', 'free ATS resume test', 'compare ATS resume tools', 'Teal resume checker review'],
   openGraph: {
     title: 'Best Free ATS Resume Checkers in 2026 — Tested & Compared',
     description: 'We tested 5 free ATS resume checkers head-to-head. Find out which one gives the best actionable suggestions.',

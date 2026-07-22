@@ -41,6 +41,20 @@ const posts = [
     date: 'July 22, 2026',
     readTime: '7 min read',
   },
+  {
+    slug: 'resume-stand-out-ats',
+    title: 'How to Make Your Resume Stand Out to ATS in 2026',
+    excerpt: 'Learn 5 proven strategies to make your resume stand out to both ATS systems and recruiters. Score higher with every application.',
+    date: 'July 22, 2026',
+    readTime: '6 min read',
+  },
+  {
+    slug: 'rezi-vs-jobscan-vs-teal-vs-rezzobot',
+    title: 'Rezi vs Jobscan vs Teal vs RezzoBot — Best Free ATS Checker 2026',
+    excerpt: 'We compare Rezi, Jobscan, Teal, and RezzoBot head-to-head. Find out which free ATS checker gives you the most bang for zero bucks.',
+    date: 'July 22, 2026',
+    readTime: '8 min read',
+  },
 ];
 
 export default function BlogPage() {

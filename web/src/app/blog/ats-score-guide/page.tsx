@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'ATS Match Score: What\'s a Good Score and How to Improve It | RezzoBot',
   description: 'Learn what an ATS match score means, what score you should aim for, and 5 proven ways to improve your resume score. Free ATS checker included.',
-  keywords: ['ATS match score', 'good ATS score', 'how to improve ATS score', 'resume match percentage', 'keyword match resume', 'ATS resume rating', 'what is a good resume score'],
+  keywords: ['ATS match score', 'good ATS score', 'what is a good ATS score', 'how to improve ATS score', 'resume match percentage', 'keyword match resume', 'ATS resume rating', 'resume score 80 vs 100'],
   openGraph: {
     title: 'ATS Match Score: What\'s a Good Score and How to Improve It',
     description: 'Learn what ATS score you need and how to improve it.',

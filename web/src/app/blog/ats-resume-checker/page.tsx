@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'What Is an ATS Resume Checker and Do You Really Need One? | RezzoBot',
   description: 'Learn what an ATS resume checker does, how it scores your resume, and whether you need one to land more interviews. Free ATS scanner included.',
-  keywords: ['ATS resume checker', 'free ATS scanner', 'resume score checker', 'applicant tracking system', 'resume keyword analyzer', 'ATS resume test free', 'how to check if my resume passes ATS'],
+  keywords: ['ATS resume checker', 'free ATS scanner', 'resume score checker', 'what is an ATS resume checker', 'applicant tracking system', 'resume keyword analyzer', 'free ATS resume test', 'how to check if my resume passes ATS'],
   openGraph: {
     title: 'What Is an ATS Resume Checker and Do You Really Need One?',
     description: 'Learn what an ATS resume checker does and whether you need one to land more interviews.',
