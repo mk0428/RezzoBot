@@ -1,14 +1,59 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-from fastapi.responses import Response
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Request
+from fastapi.responses import Response, JSONResponse
 from api.models.schemas import ParseResponse, AnalyzeRequest, AnalyzeResponse, ATSReport, OptimizeRequest, OptimizeResponse, Resume
 from api.services.parser import extract_text_from_pdf, extract_text_from_image, extract_jd_from_url
 from api.services.analyzer import ats_match
 from api.services.optimizer import optimize_resume
 from api.services.exporter import export_pdf, export_docx
 import logging
+import json
+import os
+from datetime import datetime
 
 router = APIRouter(prefix="/api", tags=["resume"])
 logger = logging.getLogger(__name__)
+
+TRACK_LOG = "/data/tracking.jsonl"
+
+@router.post("/track")
+async def track_pageview(request: Request):
+    """Simple page view tracking. Logs to a JSONL file."""
+    try:
+        body = await request.json()
+        body["ip"] = request.client.host if request.client else "unknown"
+        body["user_agent"] = request.headers.get("user-agent", "")
+        os.makedirs(os.path.dirname(TRACK_LOG), exist_ok=True)
+        with open(TRACK_LOG, "a") as f:
+            f.write(json.dumps(body, ensure_ascii=False) + "\n")
+    except Exception as e:
+        logger.warning(f"Track error: {e}")
+    return JSONResponse({"ok": True})
+
+@router.get("/track/stats")
+async def track_stats():
+    """Return tracking stats."""
+    stats = {"total_views": 0, "pages": {}, "today": 0, "referrers": {}}
+    today = datetime.now().strftime("%Y-%m-%d")
+    if os.path.exists(TRACK_LOG):
+        with open(TRACK_LOG) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                    stats["total_views"] += 1
+                    url = entry.get("url", "/")
+                    stats["pages"][url] = stats["pages"].get(url, 0) + 1
+                    ts = entry.get("ts", "")
+                    if ts.startswith(today):
+                        stats["today"] += 1
+                    ref = entry.get("referrer", "")
+                    if ref:
+                        stats["referrers"][ref] = stats["referrers"].get(ref, 0) + 1
+                except json.JSONDecodeError:
+                    continue
+    return JSONResponse(stats)
 
 
 @router.post("/parse", response_model=ParseResponse)
