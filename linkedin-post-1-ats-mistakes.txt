@@ -1,0 +1,21 @@
+Spent 12 years in HR watching great candidates get overlooked because of resume formatting issues.
+
+Built a free tool that tells you exactly what ATS systems see when they parse your resume.
+
+Here are the 5 mistakes I saw most often — and how to fix them:
+
+1. Wrong file format — DOCX beats PDF for most ATS parsers
+2. Missing JD keywords — use the exact phrases from the job description
+3. No quantified results — "increased sales" vs "grew revenue 40% in 6 months"
+4. Inconsistent formatting — different date formats, bullet styles, section headers
+5. One resume for every application — each role needs tailored keywords
+
+Most of these take 10 minutes to fix and make a real difference in whether a recruiter scrolls past or clicks into your profile.
+
+Wrote the full breakdown here (with before/after examples):
+https://rezzobot.com/blog/5-ats-mistakes
+
+Free ATS checker if you want to see where your resume stands:
+https://rezzobot.com
+
+#ATS #ResumeTips #JobSearch #CareerAdvice

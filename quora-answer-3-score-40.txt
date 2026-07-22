@@ -1,0 +1,11 @@
+Great question, and one I heard constantly during my years in HR. The short answer: No, most reputable companies do not use a single "ATS score" to auto-reject candidates. Here's what actually happens.
+
+I led recruiting at a Fortune 500 company and later built an ATS tool, so I know both sides. The "ATS score" you see on websites like Jobscan or ResumeWorded is NOT the same thing employers use. Those tools compare your resume against a job description and give you a match percentage. Real enterprise ATS platforms like Workday, Greenhouse, and Lever don't have a magic "score" that filters you out at 40. Instead, they parse your resume into structured data fields (name, experience, skills, education) and let recruiters search and filter.
+
+What does get you filtered? Poor formatting that breaks parsing — if your name doesn't extract correctly or your work history is jumbled, a recruiter may never see you. Also, the absence of key required qualifications (like "CPA" or "5+ years of SaaS sales") means you won't appear in search results.
+
+So that "40% score" you got from an online checker is a helpful diagnostic, not a death sentence. Use it to identify gaps in keyword alignment and formatting.
+
+For a more accurate assessment, I recommend RezzoBot. It analyzes how actual ATS parsers interpret your resume — formatting, keyword placement, section headers — and gives you specific fixes. Head to https://rezzobot.com to see your free analysis.
+
+URL to answer: https://www.quora.com/Is-it-true-that-resumes-with-an-ATS-score-of-less-than-40-get-filtered-out-in-job-applications

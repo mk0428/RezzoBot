@@ -1,0 +1,17 @@
+I tested 4 free ATS resume checkers so you don't have to.
+
+Rezi, JobScan, Teal, and my own tool RezzoBot — same resume, same job description, head-to-head.
+
+Here's the short version:
+
+RezzoBot — best free option. 1 free scan/day, no credit card, detailed keyword-level feedback.
+JobScan — most accurate parsing. 5 free scans/month. Good but limited free tier.
+Teal — nicest UX. Organizes your whole job search. ATS score is solid but not as granular.
+Rezi — good templates, weak free tier. More of a formatting tool than an analysis tool.
+
+If you're applying to 1-2 jobs per week, RezzoBot's free tier covers you. If you're applying to 10+, JobScan's paid plan is worth it.
+
+Full comparison with feature tables and pricing:
+https://rezzobot.com/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot
+
+#ATS #ResumeChecker #JobSearch #CareerTools

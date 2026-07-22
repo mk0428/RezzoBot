@@ -1,0 +1,21 @@
+Searches for "how to make my resume stand out" are up 5,200% year over year.
+
+People are desperate for answers. Here are 5 that actually work:
+
+1. Mirror the JD keywords exactly — don't paraphrase, use their language
+2. Put your Skills section above Experience — recruiters scan here first
+3. Quantify everything — numbers beat adjectives every time
+4. Lead with achievements, not responsibilities — what happened because of you?
+5. Format for the machine first, human second — simple layout, standard headers
+
+I built a tool (RezzoBot) that automates #1 and #5 — it scans your resume against any job description and shows you exactly which keywords match and which don't.
+
+But the principles are free and work regardless of what tool you use.
+
+Full guide with before/after examples:
+https://rezzobot.com/blog/resume-stand-out-ats
+
+Free resume analysis:
+https://rezzobot.com
+
+#ResumeTips #JobSearch #Career #ATS
