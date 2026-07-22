@@ -104,46 +104,71 @@ RULES for suggestions:
 
 IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text."""
 
-    try:
-        response = client.chat.completions.create(
-            model="deepseek-v4-flash",
-            messages=[
-                {"role": "system", "content": "You are a resume analysis expert. Output ONLY valid JSON with structured, specific suggestions."},
-                {"role": "user", "content": prompt}
-            ],
-            stream=False,
-            temperature=0.3,
-        )
-        content = response.choices[0].message.content
+    max_attempts = 3
+    last_error = None
+    for attempt in range(max_attempts):
+        try:
+            response = client.chat.completions.create(
+                model="deepseek-v4-flash",
+                messages=[
+                    {"role": "system", "content": "You are a resume analysis expert. Output ONLY valid JSON with structured, specific suggestions."},
+                    {"role": "user", "content": prompt}
+                ],
+                stream=False,
+                temperature=0,
+            )
+            content = response.choices[0].message.content
 
-        # Clean markdown code blocks if present
-        if "```json" in content:
-            content = content.split("```json")[1].split("```")[0].strip()
-        elif "```" in content:
-            content = content.split("```")[1].split("```")[0].strip()
+            # Clean markdown code blocks if present
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0].strip()
 
-        result = json.loads(content)
+            result = json.loads(content)
 
-        # Ensure backward compatibility with bot code that expects flat suggestions list
-        if "suggestions" in result and isinstance(result["suggestions"], list):
-            # Convert structured suggestions to flat strings for backward compat
-            flat_suggestions = []
-            for s in result["suggestions"]:
-                if isinstance(s, dict):
-                    flat_suggestions.append(f"[{s.get('section', 'General')}] {s.get('issue', '')} — {s.get('suggested_fix', '')}")
-                else:
-                    flat_suggestions.append(str(s))
-            result["suggestions_flat"] = flat_suggestions
+            # Validate: ensure suggestions and quick_wins are present
+            suggestions = result.get("suggestions")
+            quick_wins = result.get("quick_wins")
+            has_suggestions = isinstance(suggestions, list) and len(suggestions) > 0
+            has_quick_wins = isinstance(quick_wins, list) and len(quick_wins) > 0
 
-        return result
-    except Exception as e:
-        logger.error(f"Error calling DeepSeek API for ATS match: {e}")
-        return {
-            "score": 0,
-            "matched_keywords": [],
-            "missing_keywords": [],
-            "suggestions": [],
-            "suggestions_flat": [f"Analysis failed: {str(e)[:100]}"],
-            "match_detail": "Analysis failed",
-            "quick_wins": [],
-        }
+            if not has_suggestions or not has_quick_wins:
+                missing = []
+                if not has_suggestions:
+                    missing.append("suggestions")
+                if not has_quick_wins:
+                    missing.append("quick_wins")
+                logger.warning(f"Attempt {attempt+1}: LLM returned empty {missing}, retrying with stronger prompt")
+                # Strengthen the prompt for retry
+                prompt += "\n\nCRITICAL: You MUST include at least 3 suggestions and 2 quick_wins in your JSON response. Do NOT omit these fields."
+                continue
+
+            # Ensure backward compatibility with bot code that expects flat suggestions list
+            if isinstance(result["suggestions"], list):
+                flat_suggestions = []
+                for s in result["suggestions"]:
+                    if isinstance(s, dict):
+                        flat_suggestions.append(f"[{s.get('section', 'General')}] {s.get('issue', '')} — {s.get('suggested_fix', '')}")
+                    else:
+                        flat_suggestions.append(str(s))
+                result["suggestions_flat"] = flat_suggestions
+
+            return result
+        except Exception as e:
+            last_error = e
+            logger.error(f"Attempt {attempt+1}/{max_attempts} failed: {e}")
+            if attempt < max_attempts - 1:
+                continue
+
+    # All attempts failed
+    logger.error(f"All {max_attempts} attempts failed. Last error: {last_error}")
+    return {
+        "score": 0,
+        "matched_keywords": [],
+        "missing_keywords": [],
+        "suggestions": [],
+        "suggestions_flat": [f"Analysis failed after {max_attempts} attempts: {str(last_error)[:100]}"],
+        "match_detail": "Analysis failed",
+        "quick_wins": [],
+    }
