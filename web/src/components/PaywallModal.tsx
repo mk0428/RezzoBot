@@ -65,7 +65,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
     },
     {
       name: 'Monthly Pro',
-      price: '$14.90',
+      price: '$14.99',
       interval: '/mo',
       description: 'For active job seekers',
       planType: 'monthly' as const,
