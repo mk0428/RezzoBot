@@ -8,15 +8,15 @@ const features = [
     icon: FileText,
     color: 'bg-blue-50 text-blue-600',
     hoverColor: 'group-hover:bg-blue-100',
-    href: '/upload'
+    href: '/analyze'
   },
   {
     title: 'Score',
-    description: 'Get an instant ATS score and detailed feedback on how to improve your resume.',
+    description: 'Get an instant ATS score benchmarked against your industry — free daily analysis.',
     icon: Zap,
     color: 'bg-yellow-50 text-yellow-600',
     hoverColor: 'group-hover:bg-yellow-100',
-    href: '/upload'
+    href: '/score'
   },
   {
     title: 'Target',
