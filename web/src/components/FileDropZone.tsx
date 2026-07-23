@@ -3,6 +3,7 @@
 import { Upload, FileText, X, CheckCircle2 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { trackEvent } from '@/lib/tracker';
 
 interface FileDropZoneProps {
   onFileSelect: (file: File) => void;
@@ -16,6 +17,11 @@ export default function FileDropZone({ onFileSelect, isLoading }: FileDropZonePr
     if (acceptedFiles.length > 0) {
       const selectedFile = acceptedFiles[0];
       setFile(selectedFile);
+      trackEvent("file_selected", {
+        filename: selectedFile.name,
+        size: selectedFile.size,
+        type: selectedFile.type || "unknown",
+      });
       onFileSelect(selectedFile);
     }
   }, [onFileSelect]);

@@ -9,6 +9,7 @@ import FileDropZone from '@/components/FileDropZone';
 import ATSScorePanel from '@/components/ATSScorePanel';
 import { ATSReport } from '@/types/resume';
 import { parseResume, analyzeResume } from '@/lib/api';
+import { trackEvent } from '@/lib/tracker';
 import { FileText, Target, BarChart3, Edit3, Save, Sparkles, AlertCircle, ArrowLeft, Send } from 'lucide-react';
 
 export default function UploadPage() {
@@ -31,9 +32,22 @@ export default function UploadPage() {
       const data = await parseResume(file);
       setResumeText(data.text);
       setIsUploaded(true);
+      trackEvent("file_parsed", {
+        filename: file.name,
+        size: file.size,
+        type: file.type || "unknown",
+        text_len: data.text.length,
+      });
     } catch (err: any) {
-      setError(err.message || 'Failed to parse resume');
+      const msg = err.message || 'Failed to parse resume';
+      setError(msg);
       console.error(err);
+      trackEvent("file_parse_failed", {
+        filename: file.name,
+        size: file.size,
+        type: file.type || "unknown",
+        error: msg,
+      });
     } finally {
       setIsLoading(false);
     }

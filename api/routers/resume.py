@@ -17,7 +17,7 @@ TRACK_LOG = "/data/tracking.jsonl"
 
 @router.post("/track")
 async def track_pageview(request: Request):
-    """Simple page view tracking. Logs to a JSONL file."""
+    """Event tracking. Accepts page_view, file_selected, file_parsed, file_parse_failed, etc."""
     try:
         body = await request.json()
         body["ip"] = request.client.host if request.client else "unknown"
@@ -31,8 +31,8 @@ async def track_pageview(request: Request):
 
 @router.get("/track/stats")
 async def track_stats():
-    """Return tracking stats."""
-    stats = {"total_views": 0, "pages": {}, "today": 0, "referrers": {}}
+    """Return tracking stats with event breakdown."""
+    stats = {"total_events": 0, "pages": {}, "today": 0, "referrers": {}, "events": {}}
     today = datetime.now().strftime("%Y-%m-%d")
     if os.path.exists(TRACK_LOG):
         with open(TRACK_LOG) as f:
@@ -42,7 +42,11 @@ async def track_stats():
                     continue
                 try:
                     entry = json.loads(line)
-                    stats["total_views"] += 1
+                    stats["total_events"] += 1
+
+                    event = entry.get("event", "page_view")
+                    stats["events"][event] = stats["events"].get(event, 0) + 1
+
                     url = entry.get("url", "/")
                     stats["pages"][url] = stats["pages"].get(url, 0) + 1
                     ts = entry.get("ts", "")
