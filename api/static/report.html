@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RezzoBot Analytics</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3a;
+    --text: #e4e4ed;
+    --muted: #8888a0;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --purple: #8b5cf6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    padding: 32px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 32px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .header .sub {
+    color: var(--muted); font-size: 13px; margin-top: 4px;
+  }
+  .header .updated {
+    color: var(--muted); font-size: 12px; text-align: right;
+  }
+  .kpi-grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-bottom: 32px;
+  }
+  .kpi {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+  }
+  .kpi .label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+  .kpi .value { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; }
+  .kpi .change { font-size: 12px; margin-top: 4px; }
+  .change.up { color: var(--green); }
+  .change.down { color: var(--red); }
+  .change.neutral { color: var(--muted); }
+
+  .chart-grid {
+    display: grid; gap: 16px;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 32px;
+  }
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+  }
+  .chart-card h3 {
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 16px;
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-card canvas { width: 100% !important; max-height: 300px; }
+
+  .error-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .error-table th { text-align: left; color: var(--muted); font-weight: 500; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .error-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+
+  .page-list {
+    list-style: none; font-size: 13px;
+  }
+  .page-list li {
+    display: flex; justify-content: space-between; padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-list li:last-child { border-bottom: none; }
+  .page-list .count { color: var(--accent); font-weight: 600; }
+
+  .trend-section {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+    margin-bottom: 32px;
+  }
+  .trend-section h3 {
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 16px;
+  }
+  .trend-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .trend-table th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px 12px; border-bottom: 1px solid var(--border); }
+  .trend-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); }
+  .trend-table .wow {
+    font-variant-numeric: tabular-nums;
+  }
+  .wow.pos { color: var(--green); }
+  .wow.neg { color: var(--red); }
+  .wow.flat { color: var(--muted); }
+
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 60vh; color: var(--muted); font-size: 14px;
+  }
+  .loading::after {
+    content: ''; width: 20px; height: 20px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+    margin-left: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 40px; }
+
+  @media (max-width: 768px) {
+    .chart-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .header .updated { text-align: left; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .bar { display: inline-block; height: 8px; border-radius: 4px; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="loading">Loading report</div>
+</div>
+
+<script>
+const API = window.location.origin + window.location.pathname.replace('/report', '');
+
+async function init() {
+  try {
+    const [stats, history] = await Promise.all([
+      fetch(`${API}/api/track/stats`).then(r => r.json()),
+      fetch(`${API}/api/track/history`).then(r => r.json()).catch(() => []),
+    ]);
+    render(stats, history);
+  } catch (e) {
+    document.getElementById('app').innerHTML = `<div class="empty">Failed to load report: ${e.message}</div>`;
+  }
+}
+
+function render(stats, history) {
+  const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai', dateStyle: 'full', timeStyle: 'short' });
+  const funnel = buildFunnel(stats);
+  const convRate = stats.events?.file_parsed && stats.events?.file_selected
+    ? ((stats.events.file_parsed / stats.events.file_selected) * 100).toFixed(1)
+    : '—';
+
+  let html = `
+    <div class="header">
+      <div>
+        <h1>RezzoBot Analytics</h1>
+        <div class="sub">Product dashboard · All time</div>
+      </div>
+      <div class="updated">Updated: ${now} CST</div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="label">Total Events</div>
+        <div class="value">${stats.total_events || 0}</div>
+        <div class="change neutral">Across ${stats.pages ? Object.keys(stats.pages).length : 0} pages</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Today</div>
+        <div class="value">${stats.today || 0}</div>
+        <div class="change neutral">events today</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Unique Sessions</div>
+        <div class="value">${stats.sessions?.unique || 0}</div>
+        <div class="change ${stats.sessions?.repeat > 0 ? 'up' : 'neutral'}">
+          ${stats.sessions?.repeat || 0} repeat · ${stats.sessions?.cross_day || 0} cross-day
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="label">Conversion Rate</div>
+        <div class="value">${convRate}%</div>
+        <div class="change neutral">file_selected → file_parsed</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Geographic Distribution</h3>
+        <canvas id="geoChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Device Breakdown</h3>
+        <canvas id="deviceChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Hourly Activity (UTC)</h3>
+        <canvas id="hourlyChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Event Funnel</h3>
+        <canvas id="funnelChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Traffic Sources</h3>
+        <canvas id="referrerChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Top Pages</h3>
+        <ul class="page-list">
+          ${Object.entries(stats.pages || {}).slice(0, 10).map(([url, count]) =>
+            `<li><span>${url}</span><span class="count">${count}</span></li>`
+          ).join('')}
+        </ul>
+      </div>
+    </div>
+
+    <div class="trend-section">
+      <h3>Weekly Trend</h3>
+      ${history.length > 0 ? renderTrendTable(history) : '<div class="empty">Weekly snapshots will appear here after the first Friday cron run.</div>'}
+    </div>
+
+    <div class="chart-card full">
+      <h3>File Errors</h3>
+      ${Object.keys(stats.file_errors || {}).length > 0
+        ? `<table class="error-table"><tr><th>Error</th><th>Count</th></tr>${
+            Object.entries(stats.file_errors).map(([e, c]) =>
+              `<tr><td>${e}</td><td>${c}</td></tr>`
+            ).join('')
+          }</table>`
+        : '<div class="empty">No file parse errors recorded yet.</div>'
+      }
+    </div>
+  `;
+
+  document.getElementById('app').innerHTML = html;
+  drawCharts(stats);
+}
+
+function buildFunnel(stats) {
+  const e = stats.events || {};
+  return [
+    { label: 'page_view', value: e.page_view || 0 },
+    { label: 'file_selected', value: e.file_selected || 0 },
+    { label: 'file_parsed', value: e.file_parsed || 0 },
+    { label: 'file_parse_failed', value: e.file_parse_failed || 0 },
+  ];
+}
+
+function renderTrendTable(history) {
+  const rows = history.slice().reverse();
+  let prev = null;
+  let trs = rows.map(h => {
+    const total = h.total_events || 0;
+    const sessions = h.sessions?.unique || 0;
+    const today = h.today || 0;
+    let diffTotal = '', diffSessions = '';
+    if (prev) {
+      const dt = total - (prev.total_events || 0);
+      const ds = sessions - (prev.sessions?.unique || 0);
+      diffTotal = `<span class="wow ${dt > 0 ? 'pos' : dt < 0 ? 'neg' : 'flat'}">${dt > 0 ? '+' : ''}${dt}</span>`;
+      diffSessions = `<span class="wow ${ds > 0 ? 'pos' : ds < 0 ? 'neg' : 'flat'}">${ds > 0 ? '+' : ''}${ds}</span>`;
+    }
+    prev = h;
+    return `<tr><td>${h.snapshot_week || '—'}</td><td class="wow">${total}</td><td>${diffTotal}</td><td>${sessions}</td><td>${diffSessions}</td><td>${today}</td></tr>`;
+  }).join('');
+  return `<table class="trend-table"><tr><th>Week</th><th>Events</th><th>Δ</th><th>Sessions</th><th>Δ</th><th>Today</th></tr>${trs}</table>`;
+}
+
+function drawCharts(stats) {
+  const colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16'];
+  const bgColors = colors.map(c => c + '33');
+
+  // Geo
+  const geo = stats.geo || {};
+  const geoLabels = Object.keys(geo);
+  const geoData = Object.values(geo);
+  if (geoLabels.length) {
+    new Chart(document.getElementById('geoChart'), {
+      type: 'doughnut',
+      data: { labels: geoLabels, datasets: [{ data: geoData, backgroundColor: colors.slice(0, geoLabels.length), borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { color: '#8888a0', font: { size: 11 }, padding: 12 } } } }
+    });
+  }
+
+  // Device
+  const dev = stats.device || {};
+  const devLabels = Object.keys(dev);
+  const devData = Object.values(dev);
+  if (devLabels.length) {
+    new Chart(document.getElementById('deviceChart'), {
+      type: 'doughnut',
+      data: { labels: devLabels, datasets: [{ data: devData, backgroundColor: ['#3b82f6','#22c55e','#f59e0b','#8888a0'].slice(0, devLabels.length), borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { color: '#8888a0', font: { size: 11 }, padding: 12 } } } }
+    });
+  }
+
+  // Hourly
+  const hourly = stats.hourly || {};
+  const hourLabels = Object.keys(hourly).sort();
+  const hourData = hourLabels.map(h => hourly[h]);
+  if (hourLabels.length) {
+    new Chart(document.getElementById('hourlyChart'), {
+      type: 'bar',
+      data: { labels: hourLabels.map(h => `${h}:00`), datasets: [{ data: hourData, backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false }] },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } },
+        scales: { x: { ticks: { color: '#8888a0', font: { size: 10 } }, grid: { color: '#2a2a3a' } },
+                 y: { ticks: { color: '#8888a0', font: { size: 10 }, stepSize: 1 }, grid: { color: '#2a2a3a' } } }
+      }
+    });
+  }
+
+  // Funnel
+  const funnel = buildFunnel(stats);
+  const funnelLabels = funnel.map(f => f.label.replace(/_/g, ' '));
+  const funnelData = funnel.map(f => f.value);
+  if (funnelData.some(v => v > 0)) {
+    new Chart(document.getElementById('funnelChart'), {
+      type: 'bar',
+      data: { labels: funnelLabels, datasets: [{ data: funnelData, backgroundColor: ['#3b82f6','#22c55e','#8b5cf6','#ef4444'], borderRadius: 4, borderSkipped: false }] },
+      options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } },
+        scales: { x: { ticks: { color: '#8888a0', font: { size: 10 }, stepSize: 1 }, grid: { color: '#2a2a3a' } },
+                 y: { ticks: { color: '#e4e4ed', font: { size: 11 } }, grid: { display: false } } }
+      }
+    });
+  }
+
+  // Referrer
+  const ref = stats.referrers || {};
+  const refLabels = Object.keys(ref);
+  const refData = Object.values(ref);
+  if (refLabels.length) {
+    new Chart(document.getElementById('referrerChart'), {
+      type: 'doughnut',
+      data: { labels: refLabels.map(r => { try { return new URL(r).hostname } catch { return r } }),
+        datasets: [{ data: refData, backgroundColor: colors.slice(0, refLabels.length), borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { color: '#8888a0', font: { size: 11 }, padding: 12 } } } }
+    });
+  }
+}
+
+init();
+</script>
+</body>
+</html>

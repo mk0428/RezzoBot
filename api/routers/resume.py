@@ -180,6 +180,63 @@ async def track_stats():
 
     return JSONResponse(stats)
 
+
+SNAPSHOT_DIR = "/data/archive"
+
+
+@router.post("/track/snapshot")
+async def track_snapshot():
+    """Save current tracking stats as a weekly snapshot for trend comparison."""
+    try:
+        # Get current stats
+        stats_response = await track_stats()
+        stats = json.loads(stats_response.body)
+
+        os.makedirs(SNAPSHOT_DIR, exist_ok=True)
+        week_label = datetime.now().strftime("%Y-W%V")
+        snapshot_path = f"{SNAPSHOT_DIR}/{week_label}.json"
+
+        stats["snapshot_week"] = week_label
+        stats["snapshot_ts"] = datetime.now().isoformat()
+
+        with open(snapshot_path, "w") as f:
+            json.dump(stats, f, indent=2, ensure_ascii=False)
+
+        return JSONResponse({"ok": True, "week": week_label, "path": snapshot_path})
+    except Exception as e:
+        logger.error(f"Snapshot error: {e}")
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+
+@router.get("/track/history")
+async def track_history():
+    """Return all historical snapshots for trend analysis."""
+    snapshots = []
+    if os.path.exists(SNAPSHOT_DIR):
+        files = sorted(os.listdir(SNAPSHOT_DIR), reverse=True)
+        for fname in files[:52]:  # max 52 weeks = 1 year
+            if fname.endswith(".json"):
+                try:
+                    with open(os.path.join(SNAPSHOT_DIR, fname)) as f:
+                        snapshots.append(json.load(f))
+                except json.JSONDecodeError:
+                    continue
+    return JSONResponse(snapshots)
+
+
+@router.get("/report")
+async def get_report():
+    """Serve the live analytics report HTML page."""
+    from fastapi.responses import HTMLResponse
+    report_path = "/app/api/static/report.html"
+    if os.path.exists(report_path):
+        with open(report_path) as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(
+        content="<html><body><h1>Report not found</h1></body></html>",
+        status_code=404,
+    )
+
 @router.post("/parse", response_model=ParseResponse)
 async def parse_resume(file: UploadFile = File(...)):
     content = await file.read()
