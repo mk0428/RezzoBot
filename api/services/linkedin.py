@@ -32,7 +32,7 @@ def get_auth_url():
         "client_id": LINKEDIN_CLIENT_ID,
         "redirect_uri": LINKEDIN_REDIRECT_URI,
         "state": state,
-        "scope": " ".join(SCOPES),
+        "scope": "w_member_social",
     }
     return f"https://www.linkedin.com/oauth/v2/authorization?{urllib.parse.urlencode(params)}"
 
