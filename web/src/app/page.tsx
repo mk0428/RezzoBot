@@ -102,7 +102,25 @@ function LandingContent() {
                 <div>
                   <div className="font-bold text-gray-900">Michael Meng</div>
                   <div className="text-sm text-gray-500">CEO, RezzoBot</div>
+                  <a
+                    href="https://linkedin.com/in/mikemeng428"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 mt-1 font-medium"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    <span>Connect with me</span>
+                  </a>
                 </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+                <p className="text-blue-900 font-semibold mb-2">💬 Talk to the Founder</p>
+                <p className="text-blue-800 text-sm leading-relaxed">
+                  I personally review every piece of feedback. Message me on{' '}
+                  <a href="https://linkedin.com/in/mikemeng428" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">LinkedIn</a>
+                  {' '}with your suggestions, questions, or for 1-on-1 career advice. I read every message.
+                </p>
               </div>
 
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
