@@ -49,6 +49,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://rezzobot.com",
   },
+  verification: {
+    google: "SX6NKmYUc-nY8yr4bq6XT8eUBkYQaFcljKmOm_Iv56k",
+  },
 };
 
 import { Analytics } from "@vercel/analytics/react";
