@@ -7,6 +7,20 @@ import { ArrowRight, Calendar } from 'lucide-react';
 
 const posts = [
   {
+    slug: 'resume-analyzer',
+    title: 'Free Resume Analyzer — Check Your Resume Against Any Job Description',
+    excerpt: 'Upload your resume and get a detailed analysis against any job description. See matched keywords, missing skills, and actionable fixes.',
+    date: 'July 23, 2026',
+    readTime: '5 min read',
+  },
+  {
+    slug: 'resume-scanner',
+    title: 'Free Resume Scanner — Check Your Resume for ATS Keywords Instantly',
+    excerpt: 'Scan your resume against any job description in seconds. Get an instant keyword match analysis and see exactly what you need to improve.',
+    date: 'July 23, 2026',
+    readTime: '5 min read',
+  },
+  {
     slug: 'ats-resume-checker',
     title: 'What Is an ATS Resume Checker and Do You Really Need One?',
     excerpt: 'An ATS resume checker simulates how applicant tracking systems read your resume. Learn how these tools work and whether you need one.',

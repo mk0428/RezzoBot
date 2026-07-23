@@ -70,7 +70,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "WebApplication",
+              "@type": "SoftwareApplication",
               name: "RezzoBot",
               url: "https://rezzobot.com",
               description:
@@ -83,6 +83,57 @@ export default function RootLayout({
                 priceCurrency: "USD",
                 description: "Free ATS resume check",
               },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "What is an ATS resume checker?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "An ATS resume checker is a tool that analyzes your resume against a job description and scores how well it matches. It checks for keyword alignment, formatting issues, and missing qualifications that could cause your resume to be rejected by Applicant Tracking Systems.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Is RezzoBot free?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes. RezzoBot offers a free ATS resume check that scores your resume and shows matched and missing keywords. Paid plans unlock AI-powered resume optimization and PDF/DOCX export.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How do I check if my resume is ATS friendly?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Upload your resume and the job description you're targeting to a free ATS checker like RezzoBot. It will show you an ATS match score, highlight which keywords from the job description your resume includes, and point out what's missing.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How does ATS resume scoring work?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "ATS resume scoring compares the keywords, skills, and qualifications in your resume against those in a target job description. The score reflects how closely your resume matches what the ATS is looking for. Higher scores mean better chances of passing automated screening.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "What makes a resume ATS friendly?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "An ATS-friendly resume uses a simple single-column layout with standard section headers (Experience, Education, Skills), includes keywords from the job description naturally, avoids tables and graphics, and uses standard fonts. Complex formatting is the #1 reason resumes get rejected by ATS.",
+                  },
+                },
+              ],
             }),
           }}
         />
