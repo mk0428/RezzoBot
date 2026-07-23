@@ -27,7 +27,7 @@
 |------|--------|------|
 | / | page.tsx | 主页：Hero + 哲学 + FeatureCards + Telegram + 案例 + CTA |
 | /analyze | analyze/page.tsx | 上传简历 → 分享弹窗(LinkedIn/X) → 通用结构分析 → 引导去Target |
-| /score | score/page.tsx | 上传简历 → 选行业(10个) → ATS评分 → 弹Stripe Paywall |
+| /score | score/page.tsx | 上传简历 → 选行业(10个) → ATS评分 → 后端限流(1次/IP/天) → 超限弹Stripe Paywall |
 | /upload | upload/page.tsx | 上传简历 → 贴JD → 三栏分析 → ATS报告 → 付费/优化 |
 | /optimize | optimize/page.tsx | AI 优化 + 对比视图 |
 | /pricing | pricing/page.tsx | 定价表: Free/$4.99/$14.99/$666 → Stripe checkout |

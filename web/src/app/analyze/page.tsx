@@ -84,9 +84,8 @@ export default function AnalyzePage() {
     setIsAnalyzing(true);
     setError(null);
     try {
-      // Pass a generic structure analysis prompt as the "JD"
-      const genericJD = "General resume structure and format analysis. Evaluate: section completeness (summary, experience, education, skills), appropriate length (1-2 pages), clear formatting, action verbs, quantifiable achievements, and keyword optimization. Provide an ATS compatibility score and suggestions for improvement.";
-      const data = await analyzeResume(text, genericJD);
+      // Structure-only analysis — no JD comparison, just evaluate resume structure
+      const data = await analyzeResume(text, '', 'structure');
       setAtsReport(data.report);
     } catch (err: any) {
       setError(err.message || 'Analysis failed');

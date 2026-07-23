@@ -20,14 +20,14 @@ export async function parseResume(file: File): Promise<ParseResponse> {
   return response.json();
 }
 
-export async function analyzeResume(resumeText: string, jdText: string): Promise<AnalyzeResponse> {
+export async function analyzeResume(resumeText: string, jdText: string = '', mode: string = 'match'): Promise<AnalyzeResponse> {
   // 直调后端——跳过 Vercel BFF，避免 serverless 10s 超时限制
   const response = await fetch(`${API_BASE_CLIENT}/api/analyze`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ resume_text: resumeText, jd_text: jdText }),
+    body: JSON.stringify({ resume_text: resumeText, jd_text: jdText, mode }),
   });
 
   if (!response.ok) {

@@ -58,6 +58,7 @@ export default function ATSScorePanel({ report, onOptimize, isOptimizing }: ATSS
           {report.score >= 80 ? 'Excellent match!' : report.score >= 60 ? 'Strong potential, needs work.' : 'Significant optimization needed.'}
         </p>
 
+        {onOptimize && (
         <button
           onClick={onOptimize}
           disabled={isOptimizing}
@@ -66,6 +67,7 @@ export default function ATSScorePanel({ report, onOptimize, isOptimizing }: ATSS
           <Sparkles size={18} className={isOptimizing ? "animate-pulse" : ""} />
           <span>{isOptimizing ? 'Optimizing...' : 'Optimize with AI'}</span>
         </button>
+        )}
       </div>
 
       {/* Keywords */}

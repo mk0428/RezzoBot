@@ -318,7 +318,8 @@ async def parse_resume(file: UploadFile = File(...)):
 
 @router.post("/analyze", response_model=AnalyzeResponse)
 async def analyze_resume(request: AnalyzeRequest, http_request: Request):
-    """Analyze resume with server-side daily rate limit (1 free score per IP per day)."""
+    """Analyze resume with server-side daily rate limit (1 free score per IP per day).
+    Supports mode='match' (JD comparison) or mode='structure' (pure structure analysis)."""
     client_ip = _get_client_ip(http_request)
     allowed, reason = _check_daily_score_limit(client_ip)
     if not allowed:
@@ -327,7 +328,7 @@ async def analyze_resume(request: AnalyzeRequest, http_request: Request):
             detail=reason
         )
 
-    result = ats_match(request.resume_text, request.jd_text)
+    result = ats_match(request.resume_text, request.jd_text, mode=request.mode)
 
     try:
         # Build structured suggestions list

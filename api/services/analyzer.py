@@ -45,7 +45,7 @@ JD content:
         return []
 
 
-def ats_match(resume_text: str, jd_text: str) -> Dict[str, Any]:
+def ats_match(resume_text: str, jd_text: str = "", mode: str = "match") -> Dict[str, Any]:
     if not client:
         logger.error("DeepSeek API key not configured")
         return {
@@ -56,7 +56,50 @@ def ats_match(resume_text: str, jd_text: str) -> Dict[str, Any]:
             "match_detail": "API key not configured",
         }
 
-    prompt = f"""You are a professional ATS (Applicant Tracking System) expert.
+    if mode == "structure":
+        prompt = f"""You are a professional resume structure analyst. Analyze the following resume for structure, completeness, and formatting quality.
+
+Resume:
+---
+{resume_text}
+---
+
+Evaluate these aspects:
+1. Section completeness — does it have Summary, Experience, Education, Skills?
+2. Formatting — clear section headers, consistent style, proper spacing
+3. Content quality — action verbs, quantifiable achievements, professional language
+4. Length — appropriate for experience level (1-2 pages)
+5. ATS compatibility — simple formatting (no tables/columns), standard section names
+
+Return ONLY valid JSON with these fields:
+
+{{
+  "score": <integer 0-100, where higher = better structure>,
+  "matched_keywords": [],
+  "missing_keywords": [],
+  "match_detail": "<one-sentence summary of overall structure quality>",
+  "suggestions": [
+    {{
+      "section": "<section name>",
+      "issue": "<what's wrong>",
+      "evidence": "<evidence from resume>",
+      "suggested_fix": "<specific fix>"
+    }}
+  ],
+  "quick_wins": [
+    {{
+      "change": "<description of change>",
+      "from_text": "<current>",
+      "to_text": "<improved>"
+    }}
+  ]
+}}
+
+IMPORTANT: matched_keywords and missing_keywords should be EMPTY arrays. Do NOT fill them.
+IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text."""
+
+    else:
+        prompt = f"""You are a professional ATS (Applicant Tracking System) expert.
 Compare the following resume and job description (JD) and provide a structured matching analysis.
 
 Resume:

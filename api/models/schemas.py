@@ -38,7 +38,8 @@ class ParseResponse(BaseModel):
 
 class AnalyzeRequest(BaseModel):
     resume_text: str
-    jd_text: str
+    jd_text: str = ""
+    mode: str = "match"  # "match" (default, compares against JD) or "structure" (pure resume structure analysis)
 
 
 class Suggestion(BaseModel):
