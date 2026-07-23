@@ -8,19 +8,28 @@ interface PaywallModalProps {
   onClose: () => void;
 }
 
-const BASE_CHECKOUT_URL = process.env.NEXT_PUBLIC_LEMON_SQUEEZY_CHECKOUT_URL || 'https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2';
-const SUCCESS_URL = 'https://rezzobot.com/?payment=success';
+const API_BASE = 'https://mk5188.duckdns.org/rezzobot-api/api';
 
-function buildCheckoutUrl(type: 'single' | 'monthly' | 'lifetime'): string {
-  const params = new URLSearchParams({
-    'checkout[success_url]': SUCCESS_URL,
-    'checkout[custom][type]': type,
-  });
-  return `${BASE_CHECKOUT_URL}?${params.toString()}`;
+async function createCheckoutSession(type: 'single' | 'monthly' | 'lifetime'): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_BASE}/create-checkout-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type }),
+    });
+    const data = await res.json();
+    if (data.url) return data.url;
+    console.error('Checkout error:', data);
+    return null;
+  } catch (err) {
+    console.error('Failed to create checkout:', err);
+    return null;
+  }
 }
 
 export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -28,11 +37,23 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
   if (!isOpen || !isMounted) return null;
 
+  const handleCheckout = async (type: 'single' | 'monthly' | 'lifetime') => {
+    setLoading(type);
+    const url = await createCheckoutSession(type);
+    setLoading(null);
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      alert('Failed to create checkout. Please try again.');
+    }
+  };
+
   const tiers = [
     {
       name: 'Single Optimization',
-      price: '$4.9',
+      price: '$4.99',
       description: 'Perfect for a quick boost',
+      planType: 'single' as const,
       icon: <Zap size={24} className="text-blue-500" />,
       features: [
         'One-time AI Optimization',
@@ -40,8 +61,6 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         'One PDF/DOCX Export',
         '24h Data Retention'
       ],
-      cta: 'Buy Now',
-      url: buildCheckoutUrl('single'),
       highlight: false
     },
     {
@@ -49,6 +68,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
       price: '$14.90',
       interval: '/mo',
       description: 'For active job seekers',
+      planType: 'monthly' as const,
       icon: <Sparkles size={24} className="text-purple-500" />,
       features: [
         'Unlimited AI Optimizations',
@@ -56,14 +76,13 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         'Priority AI Processing',
         'Early Access to Features'
       ],
-      cta: 'Subscribe',
-      url: buildCheckoutUrl('monthly'),
       highlight: true
     },
     {
       name: 'Lifetime Access',
       price: '$666',
       description: 'The ultimate career investment',
+      planType: 'lifetime' as const,
       icon: <Crown size={24} className="text-amber-500" />,
       features: [
         'Everything in Monthly Pro',
@@ -71,21 +90,17 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         'Lifetime Updates',
         'VIP Support'
       ],
-      cta: 'Get Lifetime',
-      url: buildCheckoutUrl('lifetime'),
       highlight: false
     }
   ];
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      {/* Modal Content */}
       <div className="relative bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         <button
           onClick={onClose}
@@ -95,7 +110,6 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         </button>
 
         <div className="flex flex-col md:flex-row h-full">
-          {/* Left Panel - Pricing */}
           <div className="flex-grow p-8 md:p-12 overflow-y-auto max-h-[90vh] md:max-h-none">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-4">Unlock Your Career Potential</h2>
@@ -137,18 +151,19 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                     ))}
                   </ul>
 
-                  <a
-                    href={tier.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => handleCheckout(tier.planType)}
+                    disabled={loading === tier.planType}
                     className={`w-full py-3 rounded-xl font-black text-sm text-center transition-all ${
+                      loading === tier.planType ? 'opacity-60 cursor-not-allowed' : ''
+                    } ${
                       tier.highlight
                         ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200'
                         : 'bg-gray-900 text-white hover:bg-black'
                     }`}
                   >
-                    {tier.cta}
-                  </a>
+                    {loading === tier.planType ? 'Opening...' : tier.planType === 'monthly' ? 'Subscribe' : 'Buy Now'}
+                  </button>
                 </div>
               ))}
             </div>

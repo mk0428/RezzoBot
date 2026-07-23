@@ -6,11 +6,12 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import resume
+from api.routers import resume, payment
 
 app = FastAPI(title="RezzoBot API", version="0.1.0")
 
 app.include_router(resume.router)
+app.include_router(payment.router)
 
 app.add_middleware(
     CORSMiddleware,
