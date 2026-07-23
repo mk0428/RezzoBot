@@ -472,6 +472,17 @@ async def linkedin_post(text: str = ""):
     return JSONResponse(result)
 
 
+@router.get("/mkbot/auth")
+async def get_mkbot_auth_page():
+    """Serve the MKBot OAuth authorization page."""
+    from fastapi.responses import HTMLResponse
+    path = "/app/api/static/mkbot-auth.html"
+    if os.path.exists(path):
+        with open(path) as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse("Not found", status_code=404)
+
+
 @router.get("/linkedin/status")
 async def linkedin_status():
     """Check if MKBot is authenticated with LinkedIn."""
