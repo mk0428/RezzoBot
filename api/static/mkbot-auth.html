@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MKBot Auth</title>
+<style>
+  body { font-family: system-ui; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #0a0a0f; color: #e4e4ed; margin: 0; }
+  .card { background: #1a1a26; border: 1px solid #2a2a3a; border-radius: 16px; padding: 40px; max-width: 500px; text-align: center; }
+  h1 { color: #3b82f6; font-size: 24px; margin-bottom: 8px; }
+  p { color: #8888a0; font-size: 14px; line-height: 1.6; }
+  .btn { display: inline-block; background: #3b82f6; color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; margin: 20px 0; font-size: 15px; cursor: pointer; border: none; }
+  .btn:hover { background: #2563eb; }
+  .status { margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 13px; display: none; }
+  .success { background: #065f46; color: #6ee7b7; display: block; }
+  .error { background: #7f1d1d; color: #fca5a5; display: block; }
+  code { word-break: break-all; font-size: 11px; color: #8888a0; margin-top: 12px; display: block; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔗 MKBot</h1>
+  <p>Authorize MKBot to post on your LinkedIn.</p>
+  <button class="btn" id="authBtn">Authorize with LinkedIn</button>
+  <div id="status"></div>
+  <code id="debug"></code>
+</div>
+<script>
+const CLIENT_ID = "86f23s65i4gnym";
+const REDIRECT_URI = "https://mk5188.duckdns.org/rezzobot-api/api/linkedin/callback";
+
+document.getElementById("authBtn").onclick = () => {
+  const state = Math.random().toString(36).slice(2);
+  localStorage.setItem("mkbot_state", state);
+  const params = new URLSearchParams({
+    response_type: "code",
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
+    state: state,
+    scope: "w_member_social openid profile email",
+  });
+  window.location.href = `https://www.linkedin.com/oauth/v2/authorization?${params}`;
+};
+
+// Check if we're back from LinkedIn (callback)
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+const state = params.get("state");
+const error = params.get("error");
+
+if (code && state) {
+  const savedState = localStorage.getItem("mkbot_state");
+  const status = document.getElementById("status");
+  const debug = document.getElementById("debug");
+
+  if (state !== savedState) {
+    status.className = "status error";
+    status.textContent = "State mismatch. Try again.";
+    return;
+  }
+
+  status.className = "status";
+  status.style.display = "block";
+  status.textContent = "Exchanging code for token...";
+
+  // Send code to our backend
+  fetch(`https://mk5188.duckdns.org/rezzobot-api/api/linkedin/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`)
+    .then(r => r.text())
+    .then(text => {
+      status.className = "status success";
+      status.textContent = "✅ MKBot connected!";
+      debug.textContent = "You can close this tab.";
+      localStorage.removeItem("mkbot_state");
+    })
+    .catch(err => {
+      status.className = "status error";
+      status.textContent = "Error: " + err.message;
+    });
+} else if (error) {
+  document.getElementById("status").className = "status error";
+  document.getElementById("status").textContent = "Cancelled: " + error;
+}
+</script>
+</body>
+</html>
