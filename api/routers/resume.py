@@ -418,3 +418,62 @@ def _parse_optimized_result(optimized_text: str, original: Resume) -> Resume:
         languages=original.languages,
         raw_text=optimized_text,
     )
+
+
+# ─── LinkedIn MKBot Routes ────────────────────────────────────────
+
+from fastapi.responses import RedirectResponse, HTMLResponse
+from api.services import linkedin
+
+
+@router.get("/linkedin/auth")
+async def linkedin_auth():
+    """Step 1: Initiate LinkedIn OAuth. Redirects user to LinkedIn."""
+    auth_url = linkedin.get_auth_url()
+    return RedirectResponse(url=auth_url)
+
+
+@router.get("/linkedin/callback")
+async def linkedin_callback(code: str = "", state: str = ""):
+    """Step 2: LinkedIn redirects here after user authorizes."""
+    if not code:
+        return HTMLResponse(
+            content="<html><body><h2>Authorization cancelled or failed.</h2><p>No code received.</p></body></html>",
+            status_code=400,
+        )
+    result = await linkedin.exchange_code(code, state)
+
+    if "error" in result:
+        return HTMLResponse(
+            content=f"<html><body><h2>Auth Failed</h2><p>{result['error']}</p></body></html>",
+            status_code=400,
+        )
+
+    user_name = result.get("user", {}).get("name", "Unknown")
+    return HTMLResponse(
+        content=f"""
+        <html><body style="font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a0f;color:#e4e4ed">
+        <div style="text-align:center;padding:40px;background:#1a1a26;border-radius:16px;border:1px solid #2a2a3a">
+        <h1 style="color:#3b82f6">✅ MKBot Connected</h1>
+        <p>Authenticated as: <strong>{user_name}</strong></p>
+        <p style="color:#8888a0;font-size:13px">You can now close this tab. Use /api/linkedin/post to publish.</p>
+        </div></body></html>
+        """
+    )
+
+
+@router.post("/linkedin/post")
+async def linkedin_post(text: str = ""):
+    """Post text to LinkedIn. Requires ?text= parameter."""
+    if not text:
+        return JSONResponse({"error": "Missing 'text' parameter"}, status_code=400)
+
+    result = await linkedin.create_post(text)
+    return JSONResponse(result)
+
+
+@router.get("/linkedin/status")
+async def linkedin_status():
+    """Check if MKBot is authenticated with LinkedIn."""
+    status = await linkedin.check_auth_status()
+    return JSONResponse(status)
