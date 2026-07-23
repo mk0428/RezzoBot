@@ -72,7 +72,7 @@ export default function ScorePage() {
   const handleRunAnalysis = async () => {
     if (!resumeText || !industry) return;
 
-    // Check daily limit (1 free per day)
+    // Check daily limit (1 free per day) — client-side fast check
     const dailyCount = getDailyAnalysisCount();
     if (dailyCount >= 1) {
       setShowPaywall(true);
@@ -88,7 +88,12 @@ export default function ScorePage() {
       setAtsReport(data.report);
       incrementCount();
     } catch (err: any) {
-      setError(err.message || 'Analysis failed');
+      // Detect backend rate limit (402) — fallback for when localStorage was cleared
+      if (err.message && err.message.includes('Daily free score limit')) {
+        setShowPaywall(true);
+      } else {
+        setError(err.message || 'Analysis failed');
+      }
     } finally {
       setIsAnalyzing(false);
     }

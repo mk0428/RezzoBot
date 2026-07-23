@@ -6,11 +6,18 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    // Forward real user IP for server-side rate limiting
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    if (forwardedFor) {
+      headers['X-Forwarded-For'] = forwardedFor.split(',')[0].trim();
+    }
+
     const response = await fetch(`${API_BASE}/api/analyze`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(body),
     });
 

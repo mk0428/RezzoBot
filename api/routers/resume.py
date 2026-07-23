@@ -8,10 +8,53 @@ from api.services.exporter import export_pdf, export_docx
 import logging
 import json
 import os
-from datetime import datetime
+from datetime import datetime, date
 
 router = APIRouter(prefix="/api", tags=["resume"])
 logger = logging.getLogger(__name__)
+
+RATE_LIMIT_DIR = "/data/rate_limits"
+DAILY_FREE_SCORE = 1
+
+
+def _get_client_ip(request: Request) -> str:
+    """Get real client IP from forwarded headers."""
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    if request.client:
+        return request.client.host
+    return "unknown"
+
+
+def _check_daily_score_limit(ip: str) -> tuple[bool, str]:
+    """Check if this IP has used today's free score allotment.
+    Returns (allowed, reason)."""
+    today = date.today().isoformat()
+    ip_safe = ip.replace(":", "_").replace(".", "_")
+    limit_file = os.path.join(RATE_LIMIT_DIR, f"{today}_{ip_safe}.json")
+
+    if not os.path.exists(limit_file):
+        # First use today — create file
+        os.makedirs(RATE_LIMIT_DIR, exist_ok=True)
+        with open(limit_file, "w") as f:
+            json.dump({"ip": ip, "date": today, "count": 1}, f)
+        return True, "ok"
+
+    try:
+        with open(limit_file) as f:
+            data = json.load(f)
+        count = data.get("count", 0)
+        if count >= DAILY_FREE_SCORE:
+            return False, "Daily free score limit reached (1 per day)"
+        # Increment
+        data["count"] = count + 1
+        with open(limit_file, "w") as f:
+            json.dump(data, f)
+        return True, "ok"
+    except (json.JSONDecodeError, OSError) as e:
+        logger.error(f"Rate limit read error for {ip}: {e}")
+        return True, "ok"  # Fail open on errors
 
 TRACK_LOG = "/data/tracking.jsonl"
 LANG_COUNTRY_MAP = {
@@ -274,7 +317,16 @@ async def parse_resume(file: UploadFile = File(...)):
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
-async def analyze_resume(request: AnalyzeRequest):
+async def analyze_resume(request: AnalyzeRequest, http_request: Request):
+    """Analyze resume with server-side daily rate limit (1 free score per IP per day)."""
+    client_ip = _get_client_ip(http_request)
+    allowed, reason = _check_daily_score_limit(client_ip)
+    if not allowed:
+        raise HTTPException(
+            status_code=402,
+            detail=reason
+        )
+
     result = ats_match(request.resume_text, request.jd_text)
 
     try:
