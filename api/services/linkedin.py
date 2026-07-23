@@ -1,14 +1,10 @@
 """LinkedIn OAuth 2.0 + Posting Service."""
-import json
 import os
+import json
 import secrets
-import hashlib
-import base64
 import urllib.parse
 import httpx
 from datetime import datetime
-
-import os
 
 LINKEDIN_CLIENT_ID = os.environ.get("LINKEDIN_CLIENT_ID", "")
 LINKEDIN_CLIENT_SECRET = os.environ.get("LINKEDIN_CLIENT_SECRET", "")
@@ -19,28 +15,15 @@ STATE_FILE = "/data/linkedin_state.json"
 SCOPES = ["w_member_social", "openid", "profile", "email"]
 
 
-def _generate_pkce():
-    """Generate PKCE code_verifier and code_challenge."""
-    code_verifier = base64.urlsafe_b64encode(
-        secrets.token_bytes(32)
-    ).rstrip(b"=").decode()
-    code_challenge = base64.urlsafe_b64encode(
-        hashlib.sha256(code_verifier.encode()).digest()
-    ).rstrip(b"=").decode()
-    return code_verifier, code_challenge
-
-
 def get_auth_url():
-    """Generate LinkedIn OAuth authorization URL."""
+    """Generate LinkedIn OAuth authorization URL (standard auth code flow)."""
     state = secrets.token_hex(16)
-    code_verifier, code_challenge = _generate_pkce()
 
-    # Store state + PKCE for callback
+    # Store state for callback verification
     os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     with open(STATE_FILE, "w") as f:
         json.dump({
             "state": state,
-            "code_verifier": code_verifier,
             "created_at": datetime.now().isoformat(),
         }, f)
 
@@ -64,8 +47,6 @@ async def exchange_code(code: str, state: str) -> dict:
     if saved.get("state") != state:
         return {"error": "State mismatch. Possible CSRF attack."}
 
-    code_verifier = saved.get("code_verifier")
-
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             "https://www.linkedin.com/oauth/v2/accessToken",
@@ -82,15 +63,12 @@ async def exchange_code(code: str, state: str) -> dict:
         data = resp.json()
 
     if "access_token" in data:
-        # Store token
         os.makedirs(os.path.dirname(TOKEN_FILE), exist_ok=True)
         data["created_at"] = datetime.now().isoformat()
         with open(TOKEN_FILE, "w") as f:
             json.dump(data, f, indent=2)
-        # Clean up state
         os.remove(STATE_FILE)
 
-        # Also fetch user info
         user_info = await get_user_info(data["access_token"])
         data["user"] = user_info
         return data
@@ -129,13 +107,11 @@ async def create_post(text: str) -> dict:
     if not access_token:
         return {"error": "No access token found."}
 
-    # First get user's LinkedIn URN (sub from userinfo)
     user_info = await get_user_info(access_token)
     sub = user_info.get("sub")
     if not sub:
         return {"error": "Could not get user ID. Re-authenticate."}
 
-    # LinkedIn API v2 - Create a post
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             "https://api.linkedin.com/rest/posts",
@@ -161,10 +137,11 @@ async def create_post(text: str) -> dict:
         )
         data = resp.json() if resp.text else {}
         if resp.status_code in (200, 201):
+            post_id = resp.headers.get("x-restli-id", "unknown")
             return {
                 "ok": True,
-                "post_id": resp.headers.get("x-restli-id", "unknown"),
-                "url": f"https://www.linkedin.com/feed/update/{resp.headers.get('x-restli-id', '')}",
+                "post_id": post_id,
+                "url": f"https://www.linkedin.com/feed/update/{post_id}",
             }
         return {
             "error": f"LinkedIn API error ({resp.status_code})",
