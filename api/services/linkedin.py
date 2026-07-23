@@ -32,7 +32,7 @@ def get_auth_url():
         "client_id": LINKEDIN_CLIENT_ID,
         "redirect_uri": LINKEDIN_REDIRECT_URI,
         "state": state,
-        "scope": "w_member_social",
+        "scope": "w_member_social openid profile email",
     }
     return f"https://www.linkedin.com/oauth/v2/authorization?{urllib.parse.urlencode(params)}"
 
@@ -107,10 +107,9 @@ async def create_post(text: str) -> dict:
     if not access_token:
         return {"error": "No access token found."}
 
-    user_info = await get_user_info(access_token)
-    sub = user_info.get("sub")
+    sub = token_data.get("sub")
     if not sub:
-        return {"error": "Could not get user ID. Re-authenticate."}
+        return {"error": "Could not get user ID. Re-authenticate via /api/linkedin/auth."}
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
@@ -119,7 +118,7 @@ async def create_post(text: str) -> dict:
                 "Authorization": f"Bearer {access_token}",
                 "Content-Type": "application/json",
                 "X-Restli-Protocol-Version": "2.0.0",
-                "LinkedIn-Version": "202401",
+                "LinkedIn-Version": "202511",
             },
             json={
                 "author": f"urn:li:person:{sub}",
