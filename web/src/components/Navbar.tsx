@@ -26,7 +26,7 @@ export default function Navbar() {
             <Link href="/blog" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Blog</Link>
             
             
-            <Link href="https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2" target="_blank" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Pricing</Link>
+            <Link href="/pricing" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Pricing</Link>
             <div className="flex items-center space-x-4 pl-4 border-l border-gray-100">
               
               <Link href="/upload" className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm">
@@ -54,7 +54,7 @@ export default function Navbar() {
               <Link href="/blog" className="block text-base font-medium text-gray-600">Blog</Link>
           
           
-          <Link href="https://damaiwushuang.lemonsqueezy.com/checkout/buy/a2bff8f6-cccb-45e1-92ff-e1342513eab2" target="_blank" className="block text-base font-medium text-gray-600">Pricing</Link>
+          <Link href="/pricing" className="block text-base font-medium text-gray-600">Pricing</Link>
           <div className="pt-4 border-t border-gray-100 flex flex-col space-y-4">
             
             <Link href="/upload" className="bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold text-center">
