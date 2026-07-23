@@ -1,17 +1,20 @@
 import { ParseResponse, AnalyzeResponse, OptimizeResponse } from '@/types/resume';
 
+const API_BASE_CLIENT = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://mk5188.duckdns.org/rezzobot-api';
+
 export async function parseResume(file: File): Promise<ParseResponse> {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch('/api/parse', {
+  // 直接调后端——跳过 Vercel proxy，避免二进制文件被截断
+  const response = await fetch(`${API_BASE_CLIENT}/api/parse`, {
     method: 'POST',
     body: formData,
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to parse resume');
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || error.detail || 'Failed to parse resume');
   }
 
   return response.json();

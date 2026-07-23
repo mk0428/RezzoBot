@@ -59,7 +59,15 @@ async def track_stats():
 @router.post("/parse", response_model=ParseResponse)
 async def parse_resume(file: UploadFile = File(...)):
     content = await file.read()
-    filename = file.filename.lower()
+    filename = (file.filename or "unknown").lower()
+    file_size = len(content)
+    content_type = file.content_type or "unknown"
+
+    # 记录用户上传的文件元数据（用于产品分析）
+    logger.info(
+        "FILE_UPLOAD|filename=%s|size=%d|type=%s",
+        filename, file_size, content_type,
+    )
 
     text = ""
     if filename.endswith(".pdf"):
@@ -70,7 +78,16 @@ async def parse_resume(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Unsupported file type. Please upload PDF or Image.")
 
     if not text:
+        logger.warning(
+            "FILE_PARSE_FAILED|filename=%s|size=%d|type=%s",
+            filename, file_size, content_type,
+        )
         raise HTTPException(status_code=422, detail="Could not extract text from file.")
+
+    logger.info(
+        "FILE_PARSE_OK|filename=%s|size=%d|type=%s|text_len=%d",
+        filename, file_size, content_type, len(text),
+    )
 
     return ParseResponse(text=text, metadata={"filename": filename})
 
