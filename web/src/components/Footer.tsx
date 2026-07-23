@@ -29,7 +29,7 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Support Us</h3>
             <a
-              href="https://buy.stripe.com/eVqcN78QdeJPbUP7JT48000"
+              href="https://buy.stripe.com/14a14paylgrx2kf6fp48002"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-amber-100 transition-all"
