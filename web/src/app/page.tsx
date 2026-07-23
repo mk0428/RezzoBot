@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Star, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useEffect, useState, Suspense } from "react";
 import { handlePaymentSuccess } from "@/lib/purchase";
+import { trackEvent } from "@/lib/tracker";
 
 function LandingContent() {
   const router = useRouter();
@@ -16,6 +17,8 @@ function LandingContent() {
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'cancelled' | null>(null);
 
   useEffect(() => {
+    // Fire page_view on landing
+    trackEvent("page_view");
     const payment = searchParams.get('payment');
     const type = searchParams.get('type'); // custom param we add to redirect URL
 

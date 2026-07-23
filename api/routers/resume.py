@@ -14,14 +14,51 @@ router = APIRouter(prefix="/api", tags=["resume"])
 logger = logging.getLogger(__name__)
 
 TRACK_LOG = "/data/tracking.jsonl"
+LANG_COUNTRY_MAP = {
+    "en": "US", "zh": "CN", "es": "ES", "fr": "FR", "de": "DE",
+    "ja": "JP", "ko": "KR", "pt": "BR", "ru": "RU", "ar": "SA",
+    "hi": "IN", "it": "IT", "nl": "NL", "pl": "PL", "tr": "TR",
+    "vi": "VN", "th": "TH", "sv": "SE", "id": "ID", "ms": "MY",
+}
+
+
+def _parse_device(ua: str) -> str:
+    """Determine device type from User-Agent string."""
+    u = ua.lower()
+    if "ipad" in u or "tablet" in u or "kindle" in u or "silk" in u:
+        return "tablet"
+    if any(x in u for x in ["mobile", "iphone", "android", "ipod", "blackberry",
+                            "opera mini", "windows phone", "iemobile"]):
+        return "mobile"
+    return "desktop"
+
+
+def _guess_country(accept_language: str) -> str:
+    """Guess likely country from Accept-Language header. Zero-dependency."""
+    import re
+    # Try en-US → US, zh-CN → CN
+    m = re.search(r"([a-z]{2})-([A-Z]{2})", accept_language)
+    if m:
+        return m.group(2)
+    # Fallback: map first language tag
+    m = re.search(r"^([a-z]{2})", accept_language)
+    if m:
+        return LANG_COUNTRY_MAP.get(m.group(1), "unknown")
+    return "unknown"
+
 
 @router.post("/track")
 async def track_pageview(request: Request):
     """Event tracking. Accepts page_view, file_selected, file_parsed, file_parse_failed, etc."""
     try:
         body = await request.json()
+        ua = request.headers.get("user-agent", "")
         body["ip"] = request.client.host if request.client else "unknown"
-        body["user_agent"] = request.headers.get("user-agent", "")
+        body["user_agent"] = ua
+        body["device_type"] = _parse_device(ua)
+        body["country"] = _guess_country(
+            request.headers.get("accept-language", "")
+        )
         os.makedirs(os.path.dirname(TRACK_LOG), exist_ok=True)
         with open(TRACK_LOG, "a") as f:
             f.write(json.dumps(body, ensure_ascii=False) + "\n")
@@ -29,11 +66,27 @@ async def track_pageview(request: Request):
         logger.warning(f"Track error: {e}")
     return JSONResponse({"ok": True})
 
+
 @router.get("/track/stats")
 async def track_stats():
-    """Return tracking stats with event breakdown."""
-    stats = {"total_events": 0, "pages": {}, "today": 0, "referrers": {}, "events": {}}
+    """Return tracking stats with enriched analytics."""
+    stats = {
+        "total_events": 0,
+        "pages": {},
+        "today": 0,
+        "referrers": {},
+        "events": {},
+        "geo": {},
+        "device": {},
+        "sessions": {"unique": 0, "repeat": 0, "cross_day": 0},
+        "hourly": {},
+        "file_errors": {},
+        "file_sizes": {"total": 0, "count": 0},
+    }
     today = datetime.now().strftime("%Y-%m-%d")
+    sessions_seen = {}
+    events_per_session = {}
+
     if os.path.exists(TRACK_LOG):
         with open(TRACK_LOG) as f:
             for line in f:
@@ -44,21 +97,88 @@ async def track_stats():
                     entry = json.loads(line)
                     stats["total_events"] += 1
 
+                    # Event type breakdown
                     event = entry.get("event", "page_view")
                     stats["events"][event] = stats["events"].get(event, 0) + 1
 
+                    # Page popularity
                     url = entry.get("url", "/")
                     stats["pages"][url] = stats["pages"].get(url, 0) + 1
+
+                    # Today's count
                     ts = entry.get("ts", "")
                     if ts.startswith(today):
                         stats["today"] += 1
+
+                    # Referrer sources
                     ref = entry.get("referrer", "")
                     if ref:
                         stats["referrers"][ref] = stats["referrers"].get(ref, 0) + 1
+
+                    # GEO distribution
+                    country = entry.get("country", "unknown")
+                    stats["geo"][country] = stats["geo"].get(country, 0) + 1
+
+                    # Device distribution
+                    device = entry.get("device_type", "unknown")
+                    stats["device"][device] = stats["device"].get(device, 0) + 1
+
+                    # Hourly breakdown
+                    if ts:
+                        try:
+                            hour = ts[11:13]
+                            stats["hourly"][hour] = stats["hourly"].get(hour, 0) + 1
+                        except IndexError:
+                            pass
+
+                    # Session tracking
+                    sid = entry.get("session_id", "")
+                    if sid:
+                        day = ts[:10] if ts else "unknown"
+                        if sid not in sessions_seen:
+                            sessions_seen[sid] = {"days": set(), "event_count": 0}
+                        sessions_seen[sid]["days"].add(day)
+                        sessions_seen[sid]["event_count"] += 1
+                        if sid not in events_per_session:
+                            events_per_session[sid] = 0
+                        events_per_session[sid] += 1
+
+                    # File error clustering
+                    if event == "file_parse_failed":
+                        err = entry.get("data", {}).get("error", "unknown") if isinstance(entry.get("data"), dict) else "unknown"
+                        stats["file_errors"][err] = stats["file_errors"].get(err, 0) + 1
+
+                    # File size tracking
+                    if event in ("file_parsed", "file_parse_failed", "file_selected"):
+                        data = entry.get("data")
+                        if isinstance(data, dict) and data.get("size"):
+                            stats["file_sizes"]["total"] += int(data["size"])
+                            stats["file_sizes"]["count"] += 1
+
                 except json.JSONDecodeError:
                     continue
-    return JSONResponse(stats)
 
+    # Session analysis
+    stats["sessions"]["unique"] = len(sessions_seen)
+    for sid, info in sessions_seen.items():
+        if len(info["days"]) > 1:
+            stats["sessions"]["cross_day"] += 1
+        if info["event_count"] > 1:
+            stats["sessions"]["repeat"] += 1
+
+    # Average file size
+    if stats["file_sizes"]["count"] > 0:
+        stats["file_sizes"]["avg_bytes"] = stats["file_sizes"]["total"] // stats["file_sizes"]["count"]
+    del stats["file_sizes"]["total"]
+
+    # Sort for readability
+    stats["pages"] = dict(sorted(stats["pages"].items(), key=lambda x: -x[1]))
+    stats["events"] = dict(sorted(stats["events"].items(), key=lambda x: -x[1]))
+    stats["geo"] = dict(sorted(stats["geo"].items(), key=lambda x: -x[1]))
+    stats["hourly"] = dict(sorted(stats["hourly"].items()))
+    stats["file_errors"] = dict(sorted(stats["file_errors"].items(), key=lambda x: -x[1]))
+
+    return JSONResponse(stats)
 
 @router.post("/parse", response_model=ParseResponse)
 async def parse_resume(file: UploadFile = File(...)):

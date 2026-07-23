@@ -29,6 +29,11 @@ export default function UploadPage() {
     setError(null);
     try {
       setFileName(file.name);
+      trackEvent("file_selected", {
+        filename: file.name,
+        size: file.size,
+        type: file.type || "unknown",
+      });
       const data = await parseResume(file);
       setResumeText(data.text);
       setIsUploaded(true);
