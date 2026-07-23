@@ -50,8 +50,6 @@ def get_auth_url():
         "redirect_uri": LINKEDIN_REDIRECT_URI,
         "state": state,
         "scope": " ".join(SCOPES),
-        "code_challenge": code_challenge,
-        "code_challenge_method": "S256",
     }
     return f"https://www.linkedin.com/oauth/v2/authorization?{urllib.parse.urlencode(params)}"
 
@@ -74,7 +72,6 @@ async def exchange_code(code: str, state: str) -> dict:
             data={
                 "grant_type": "authorization_code",
                 "code": code,
-                "code_verifier": code_verifier,
                 "redirect_uri": LINKEDIN_REDIRECT_URI,
                 "client_id": LINKEDIN_CLIENT_ID,
                 "client_secret": LINKEDIN_CLIENT_SECRET,
