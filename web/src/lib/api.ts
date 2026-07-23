@@ -21,7 +21,8 @@ export async function parseResume(file: File): Promise<ParseResponse> {
 }
 
 export async function analyzeResume(resumeText: string, jdText: string): Promise<AnalyzeResponse> {
-  const response = await fetch('/api/analyze', {
+  // 直调后端——跳过 Vercel BFF，避免 serverless 10s 超时限制
+  const response = await fetch(`${API_BASE_CLIENT}/api/analyze`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -30,15 +31,15 @@ export async function analyzeResume(resumeText: string, jdText: string): Promise
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to analyze resume');
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || error.detail || 'Failed to analyze resume');
   }
 
   return response.json();
 }
 
 export async function optimizeResume(resumeText: string, jdText: string): Promise<OptimizeResponse> {
-  const response = await fetch('/api/optimize', {
+  const response = await fetch(`${API_BASE_CLIENT}/api/optimize`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -50,8 +51,8 @@ export async function optimizeResume(resumeText: string, jdText: string): Promis
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to optimize resume');
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || error.detail || 'Failed to optimize resume');
   }
 
   return response.json();
@@ -61,7 +62,7 @@ export async function exportPdf(resumeText: string): Promise<void> {
   const formData = new FormData();
   formData.append('resume_text', resumeText);
 
-  const response = await fetch('/api/export/pdf', {
+  const response = await fetch(`${API_BASE_CLIENT}/api/export/pdf`, {
     method: 'POST',
     body: formData,
   });
@@ -78,7 +79,7 @@ export async function exportDocx(resumeText: string): Promise<void> {
   const formData = new FormData();
   formData.append('resume_text', resumeText);
 
-  const response = await fetch('/api/export/docx', {
+  const response = await fetch(`${API_BASE_CLIENT}/api/export/docx`, {
     method: 'POST',
     body: formData,
   });
