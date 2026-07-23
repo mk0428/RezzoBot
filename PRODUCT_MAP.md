@@ -26,7 +26,7 @@
 | 路由 | 文件名 | 功能 |
 |------|--------|------|
 | / | page.tsx | 主页：Hero + 哲学 + FeatureCards + Telegram + 案例 + CTA |
-| /analyze | analyze/page.tsx | 上传简历 → 分享弹窗(LinkedIn/X) → 通用结构分析 → 引导去Target |
+| /analyze | analyze/page.tsx | 上传简历 → 分享弹窗(LinkedIn/X) → 通用结构分析(mode=structure, 无关键词匹配) → 引导去Target |
 | /score | score/page.tsx | 上传简历 → 选行业(10个) → ATS评分 → 后端限流(1次/IP/天) → 超限弹Stripe Paywall |
 | /upload | upload/page.tsx | 上传简历 → 贴JD → 三栏分析 → ATS报告 → 付费/优化 |
 | /optimize | optimize/page.tsx | AI 优化 + 对比视图 |
@@ -70,7 +70,7 @@
 **支付商：** Stripe（不是Lemon Squeezy）
 **定价：** $4.99 single / $14.99 monthly / $666 lifetime
 **Stripe Price IDs：** price_1TwHu6PmXBEMPweO524prhOG(single) / price_1TwHu6PmXBEMPweOgYuZdj1S(monthly) / price_1TwHu6PmXBEMPweOPVzmnGjF(lifetime)
-**免费机制：** 没有每日免费，每个分析都有token成本。用户通过分享（LinkedIn/X）换免费额度。广告方案待定。
+**免费机制：** 统一 1 次/IP/天（所有功能共享），超限弹 Stripe Paywall
 **打赏：** Stripe payment link（Buy me a coffee）
 
 ---

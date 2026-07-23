@@ -319,7 +319,8 @@ async def parse_resume(file: UploadFile = File(...)):
 @router.post("/analyze", response_model=AnalyzeResponse)
 async def analyze_resume(request: AnalyzeRequest, http_request: Request):
     """Analyze resume with server-side daily rate limit (1 free score per IP per day).
-    Supports mode='match' (JD comparison) or mode='structure' (pure structure analysis)."""
+    All modes (match + structure) share the same daily pool: 1 free analysis per IP."""
+    # All modes are rate limited — one free analysis per IP per day
     client_ip = _get_client_ip(http_request)
     allowed, reason = _check_daily_score_limit(client_ip)
     if not allowed:

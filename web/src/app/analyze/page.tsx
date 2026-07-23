@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FileDropZone from '@/components/FileDropZone';
+import PaywallModal from '@/components/PaywallModal';
 import ATSScorePanel from '@/components/ATSScorePanel';
 import { ATSReport } from '@/types/resume';
 import { parseResume, analyzeResume } from '@/lib/api';
@@ -30,6 +31,7 @@ export default function AnalyzePage() {
   const [fileName, setFileName] = useState('resume.pdf');
   const [showShareModal, setShowShareModal] = useState(false);
   const [shared, setShared] = useState(hasSharedToday());
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const handleFileSelect = async (file: File) => {
     setIsLoading(true);
@@ -88,7 +90,12 @@ export default function AnalyzePage() {
       const data = await analyzeResume(text, '', 'structure');
       setAtsReport(data.report);
     } catch (err: any) {
-      setError(err.message || 'Analysis failed');
+      // Backend rate limit hit (1 free/IP/day) — redirect to paywall
+      if (err.message && err.message.includes('Daily free')) {
+        setShowPaywall(true);
+      } else {
+        setError(err.message || 'Analysis failed');
+      }
     } finally {
       setIsAnalyzing(false);
     }
@@ -140,6 +147,9 @@ export default function AnalyzePage() {
             </div>
           </div>
         )}
+
+        {/* Paywall */}
+        <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
         <div className="py-16 px-4 max-w-4xl mx-auto">
           {/* Header */}

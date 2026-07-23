@@ -88,7 +88,12 @@ export default function UploadPage() {
       // Increment daily count
       localStorage.setItem('_rezzobot_analysis_count', String(dailyCount + 1));
     } catch (err: any) {
-      setError(err.message || 'Analysis failed');
+      // If backend says limit reached, show paywall
+      if (err.message && err.message.includes('Daily free')) {
+        setShowPaywall(true);
+      } else {
+        setError(err.message || 'Analysis failed');
+      }
       console.error(err);
     } finally {
       setIsAnalyzing(false);
