@@ -86,7 +86,7 @@ export default function UploadPage() {
     try {
       const data = await analyzeResume(resumeText, jobDescription);
       setAtsReport(data.report);
-      trackEvent("analyze_completed", { filename: fileName, score: data.report.total_score, mode: "target" });
+      trackEvent("analyze_completed", { filename: fileName, score: data.report.score, mode: "target" });
       // Increment daily count
       localStorage.setItem('_rezzobot_analysis_count', String(dailyCount + 1));
     } catch (err: any) {

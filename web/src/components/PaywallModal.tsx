@@ -117,6 +117,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         <button
           onClick={handleClose}
           className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
+        >
           <X size={20} className="text-gray-400" />
         </button>
 

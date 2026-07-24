@@ -8,6 +8,7 @@ import ATSScorePanel from '@/components/ATSScorePanel';
 import PaywallModal from '@/components/PaywallModal';
 import { ATSReport } from '@/types/resume';
 import { parseResume, analyzeResume } from '@/lib/api';
+import { trackEvent } from '@/lib/tracker';
 import { Zap, ChevronDown, AlertCircle, ArrowLeft, ChevronRight, Check } from 'lucide-react';
 
 const INDUSTRIES: Record<string, string[]> = {
@@ -87,7 +88,7 @@ export default function ScorePage() {
       const industryJD = `We are hiring for a ${industry} role. Required skills and qualifications: ${keywords.join(', ')}. The ideal candidate should have experience in most of these areas.`;
       const data = await analyzeResume(resumeText, industryJD);
       setAtsReport(data.report);
-      trackEvent("score_completed", { filename: fileName, score: data.report.total_score, industry });
+      trackEvent("score_completed", { filename: fileName, score: data.report.score, industry });
       incrementCount();
     } catch (err: any) {
       // Detect backend rate limit (402) — fallback for when localStorage was cleared
