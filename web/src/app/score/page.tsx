@@ -81,11 +81,13 @@ export default function ScorePage() {
 
     setIsAnalyzing(true);
     setError(null);
+    trackEvent("score_started", { filename: fileName, industry });
     try {
       const keywords = INDUSTRIES[industry] || [];
       const industryJD = `We are hiring for a ${industry} role. Required skills and qualifications: ${keywords.join(', ')}. The ideal candidate should have experience in most of these areas.`;
       const data = await analyzeResume(resumeText, industryJD);
       setAtsReport(data.report);
+      trackEvent("score_completed", { filename: fileName, score: data.report.total_score, industry });
       incrementCount();
     } catch (err: any) {
       // Detect backend rate limit (402) — fallback for when localStorage was cleared

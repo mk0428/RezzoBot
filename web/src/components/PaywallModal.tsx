@@ -36,6 +36,17 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (isOpen && isMounted) {
+      trackEvent("paywall_shown");
+    }
+  }, [isOpen, isMounted]);
+
+  const handleClose = () => {
+    trackEvent("paywall_dismissed");
+    onClose();
+  };
+
   if (!isOpen || !isMounted) return null;
 
   const handleCheckout = async (type: 'single' | 'monthly' | 'lifetime') => {
@@ -100,14 +111,12 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
+        onClick={handleClose}
       />
-
       <div className="relative bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
-        >
           <X size={20} className="text-gray-400" />
         </button>
 

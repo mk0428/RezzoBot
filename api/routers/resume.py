@@ -62,6 +62,17 @@ EXCLUDED_IPS = set(
     for ip in os.environ.get("EXCLUDED_IPS", "").split(",")
     if ip.strip()
 )
+EXCLUDED_REFERRERS = {"https://security.feishu.cn/", "https://vercel.com/"}
+
+def _is_excluded(entry: dict) -> bool:
+    """Check if a tracking entry should be excluded (founder/internal traffic)."""
+    if entry.get("ip") in EXCLUDED_IPS:
+        return True
+    ref = (entry.get("referrer") or "").strip()
+    if ref in EXCLUDED_REFERRERS:
+        return True
+    # Exclude very short sessions with only 1 event from known internal IP ranges
+    return False
 LANG_COUNTRY_MAP = {
     "en": "US", "zh": "CN", "es": "ES", "fr": "FR", "de": "DE",
     "ja": "JP", "ko": "KR", "pt": "BR", "ru": "RU", "ar": "SA",
@@ -144,7 +155,7 @@ async def track_stats():
                 try:
                     entry = json.loads(line)
                     # Skip excluded IPs (e.g. founder/team)
-                    if entry.get("ip") in EXCLUDED_IPS:
+                    if _is_excluded(entry):
                         continue
                     stats["total_events"] += 1
 
@@ -230,6 +241,161 @@ async def track_stats():
     stats["file_errors"] = dict(sorted(stats["file_errors"].items(), key=lambda x: -x[1]))
 
     return JSONResponse(stats)
+
+
+@router.get("/track/sessions")
+async def track_sessions():
+    """Return all unique sessions with entry/exit page, duration, event count."""
+    sessions = {}
+    if not os.path.exists(TRACK_LOG):
+        return JSONResponse([])
+    with open(TRACK_LOG) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+                if _is_excluded(entry):
+                    continue
+                sid = entry.get("session_id") or entry.get("ip", "unknown")
+                ts = entry.get("ts", "")
+                if sid not in sessions:
+                    sessions[sid] = {
+                        "session_id": sid,
+                        "events": [],
+                        "first_seen": ts,
+                        "last_seen": ts,
+                        "country": entry.get("country", "unknown"),
+                        "device": entry.get("device_type", "unknown"),
+                        "referrer": entry.get("referrer", ""),
+                        "event_count": 0,
+                    }
+                sessions[sid]["events"].append({
+                    "event": entry.get("event", "page_view"),
+                    "url": entry.get("url", "/"),
+                    "ts": ts,
+                    "data": entry.get("data"),
+                })
+                sessions[sid]["event_count"] += 1
+                if ts < sessions[sid]["first_seen"]:
+                    sessions[sid]["first_seen"] = ts
+                if ts > sessions[sid]["last_seen"]:
+                    sessions[sid]["last_seen"] = ts
+            except json.JSONDecodeError:
+                continue
+
+    result = []
+    for sid, info in sessions.items():
+        # Sort events by timestamp
+        info["events"].sort(key=lambda e: e["ts"])
+        # Entry and exit pages
+        info["entry_page"] = info["events"][0]["url"] if info["events"] else "/"
+        info["exit_page"] = info["events"][-1]["url"] if info["events"] else "/"
+        # Duration
+        if info["first_seen"] and info["last_seen"]:
+            try:
+                from datetime import datetime as dt
+                f = dt.fromisoformat(info["first_seen"].replace("Z", "+00:00"))
+                l = dt.fromisoformat(info["last_seen"].replace("Z", "+00:00"))
+                info["duration_seconds"] = int((l - f).total_seconds())
+            except:
+                info["duration_seconds"] = 0
+        # Has payment?
+        info["has_payment"] = any(e["event"] in ("payment_returned", "checkout_completed") for e in info["events"])
+        info["has_paywall_view"] = any(e["event"] == "paywall_shown" for e in info["events"])
+        # Remove raw events from list view (too large)
+        events_summary = info.pop("events")
+        info["events_preview"] = [{"event": e["event"], "url": e["url"]} for e in events_summary[:20]]
+        result.append(info)
+
+    # Sort by last_seen descending (most recent first)
+    result.sort(key=lambda s: s["last_seen"], reverse=True)
+    return JSONResponse(result)
+
+
+@router.get("/track/session/{session_id}")
+async def track_session_journey(session_id: str):
+    """Return full event timeline for one session."""
+    events = []
+    if not os.path.exists(TRACK_LOG):
+        return JSONResponse({"session_id": session_id, "events": []})
+    with open(TRACK_LOG) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+                if entry.get("session_id") == session_id and not _is_excluded(entry):
+                    events.append(entry)
+            except json.JSONDecodeError:
+                continue
+    events.sort(key=lambda e: e.get("ts", ""))
+    return JSONResponse({
+        "session_id": session_id,
+        "events": events,
+        "count": len(events),
+    })
+
+
+@router.get("/track/funnel")
+async def track_funnel():
+    """Return conversion funnel data across all sessions."""
+    steps = [
+        "page_view",
+        "file_selected",
+        "file_parsed",
+        "paywall_shown",
+        "checkout_click",
+        "payment_returned",
+    ]
+    counts = {step: 0 for step in steps}
+    sessions_with_step = {step: set() for step in steps}
+
+    if not os.path.exists(TRACK_LOG):
+        return JSONResponse({"funnel": [], "total_sessions": 0})
+
+    with open(TRACK_LOG) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+                if entry.get("ip") in EXCLUDED_IPS:
+                    continue
+                event = entry.get("event", "page_view")
+                sid = entry.get("session_id") or entry.get("ip", "unknown")
+                if event in counts:
+                    counts[event] += 1
+                    sessions_with_step[event].add(sid)
+            except json.JSONDecodeError:
+                continue
+
+    funnel = []
+    for step in steps:
+        funnel.append({
+            "step": step,
+            "label": step.replace("_", " ").title(),
+            "events": counts[step],
+            "unique_sessions": len(sessions_with_step[step]),
+        })
+    # Add conversion rates
+    for i in range(1, len(funnel)):
+        prev = funnel[i - 1]["unique_sessions"]
+        curr = funnel[i]["unique_sessions"]
+        funnel[i]["dropoff"] = prev - curr if prev > 0 else 0
+        funnel[i]["conversion_rate"] = round(curr / prev * 100, 1) if prev > 0 else 0.0
+
+    total_sessions = len(sessions_with_step["page_view"])
+    return JSONResponse({
+        "funnel": funnel,
+        "total_sessions": total_sessions,
+        "overall_conversion": round(
+            funnel[-1]["unique_sessions"] / total_sessions * 100, 1
+        ) if total_sessions > 0 else 0.0,
+    })
 
 
 SNAPSHOT_DIR = "/data/archive"

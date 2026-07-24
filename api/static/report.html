@@ -127,6 +127,35 @@
 
   .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 40px; }
 
+  /* ── Tabs ── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border-radius: 10px; padding: 4px; border: 1px solid var(--border); }
+  .tab { flex: 1; padding: 10px 20px; border: none; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; transition: all .15s; }
+  .tab:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .tab.active { color: #fff; background: var(--accent); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── Session list ── */
+  .session-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; font-size: 12px; }
+  .session-row:hover { background: rgba(255,255,255,0.03); }
+  .session-row .session-id { font-family: monospace; color: var(--accent); min-width: 120px; font-size: 11px; }
+  .session-row .session-path { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+  .session-row .session-stats { display: flex; gap: 16px; color: var(--muted); font-size: 11px; }
+  .session-row .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .badge-paid { background: #065f46; color: #6ee7b7; }
+  .badge-viewed { background: #1e3a5f; color: #93c5fd; }
+  .badge-country { background: var(--surface); color: var(--muted); }
+
+  /* ── Session detail ── */
+  .event-timeline { margin-top: 16px; }
+  .event-item { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-left: 2px solid var(--border); margin-left: 8px; font-size: 12px; }
+  .event-item:first-child { border-left-color: var(--green); }
+  .event-item:last-child { border-left-color: var(--red); }
+  .event-item .event-name { font-weight: 600; color: var(--text); min-width: 100px; }
+  .event-item .event-url { color: var(--muted); }
+  .event-item .event-ts { color: var(--muted); font-size: 11px; min-width: 140px; }
+  .back-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-bottom: 16px; }
+
   @media (max-width: 768px) {
     .chart-grid { grid-template-columns: 1fr; }
     .header { flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -147,17 +176,19 @@ const API = window.location.origin + window.location.pathname.replace('/api/repo
 
 async function init() {
   try {
-    const [stats, history] = await Promise.all([
+    const [stats, history, funnelData, sessionsData] = await Promise.all([
       fetch(`${API}/api/track/stats`).then(r => r.json()),
       fetch(`${API}/api/track/history`).then(r => r.json()).catch(() => []),
+      fetch(`${API}/api/track/funnel`).then(r => r.json()).catch(() => null),
+      fetch(`${API}/api/track/sessions`).then(r => r.json()).catch(() => []),
     ]);
-    render(stats, history);
+    render(stats, history, funnelData, sessionsData);
   } catch (e) {
     document.getElementById('app').innerHTML = `<div class="empty">Failed to load report: ${e.message}</div>`;
   }
 }
 
-function render(stats, history) {
+function render(stats, history, funnelData, sessionsData) {
   const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai', dateStyle: 'full', timeStyle: 'short' });
   const funnel = buildFunnel(stats);
   const convRate = stats.events?.file_parsed && stats.events?.file_selected
@@ -173,6 +204,13 @@ function render(stats, history) {
       <div class="updated">Updated: ${now} CST</div>
     </div>
 
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('summary')">Summary</button>
+      <button class="tab" onclick="switchTab('funnel')">Funnel</button>
+      <button class="tab" onclick="switchTab('sessions')">Sessions (${sessionsData.length})</button>
+    </div>
+
+    <div id="tab-summary" class="tab-content active">
     <div class="kpi-grid">
       <div class="kpi">
         <div class="label">Total Events</div>
@@ -245,10 +283,102 @@ function render(stats, history) {
         : '<div class="empty">No file parse errors recorded yet.</div>'
       }
     </div>
+    </div>
+
+    <div id="tab-funnel" class="tab-content">
+      ${renderFunnelHTML(funnelData)}
+    </div>
+
+    <div id="tab-sessions" class="tab-content">
+      ${renderSessionsHTML(sessionsData)}
+    </div>
   `;
 
   document.getElementById('app').innerHTML = html;
   drawCharts(stats);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[onclick*="'${name}'"]`).classList.add('active');
+  document.getElementById(`tab-${name}`).classList.add('active');
+}
+
+function renderFunnelHTML(data) {
+  if (!data || !data.funnel) return '<div class="empty">No funnel data available yet.</div>';
+  const funnel = data.funnel;
+  let html = `
+    <div class="chart-card full">
+      <h3>Conversion Funnel (${data.total_sessions} sessions · ${data.overall_conversion}% overall)</h3>
+      <table class="error-table" style="margin-bottom:20px">
+        <tr><th>Step</th><th>Events</th><th>Sessions</th><th>Drop-off</th><th>Conversion</th><th>Bar</th></tr>`;
+  const maxSessions = Math.max(...funnel.map(f => f.unique_sessions), 1);
+  funnel.forEach(f => {
+    const barPct = (f.unique_sessions / maxSessions * 100).toFixed(0);
+    const barColor = f.unique_sessions < 5 ? '#ef4444' : f.unique_sessions < 20 ? '#f59e0b' : '#22c55e';
+    html += `<tr>
+      <td><strong>${f.label}</strong></td>
+      <td>${f.events}</td>
+      <td>${f.unique_sessions}</td>
+      <td>${f.dropoff !== undefined ? f.dropoff : '-'}</td>
+      <td>${f.conversion_rate !== undefined ? f.conversion_rate + '%' : '100%'}</td>
+      <td><div style="width:${barPct}%;height:20px;background:${barColor};border-radius:4px;min-width:4px"></div></td>
+    </tr>`;
+  });
+  html += `</table></div>`;
+  return html;
+}
+
+function renderSessionsHTML(sessions) {
+  if (!sessions.length) return '<div class="empty">No session data available yet.</div>';
+  let html = `<div class="chart-card full">
+    <h3>User Sessions (${sessions.length}) — click a row to see full journey</h3>
+    <div>`;
+  sessions.slice(0, 100).forEach(s => {
+    const badges = [];
+    if (s.has_payment) badges.push('<span class="badge badge-paid">paid</span>');
+    if (s.has_paywall_view) badges.push('<span class="badge badge-viewed">paywall</span>');
+    const dur = s.duration_seconds ? `${Math.round(s.duration_seconds / 60)}m` : '?';
+    html += `<div class="session-row" onclick="showSessionDetail('${s.session_id}')">
+      <span class="session-id">${s.session_id.slice(0, 16)}</span>
+      <span class="session-path">${s.entry_page} → ${s.exit_page}</span>
+      <span class="session-stats">
+        <span>${s.event_count} events</span>
+        <span>${dur}</span>
+        <span class="badge badge-country">${s.country || '?'}</span>
+        ${badges.join(' ')}
+      </span>
+    </div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+
+async function showSessionDetail(sessionId) {
+  const tab = document.getElementById('tab-sessions');
+  tab.innerHTML = '<div class="loading">Loading session detail...</div>';
+  try {
+    const res = await fetch(`${API}/api/track/session/${sessionId}`);
+    const data = await res.json();
+    let html = `<button class="back-btn" onclick="switchTab('sessions')">← Back to sessions</button>
+      <div class="chart-card full">
+        <h3>Session: ${sessionId} (${data.count} events)</h3>
+        <div class="event-timeline">`;
+    data.events.forEach(e => {
+      const ts = (e.ts || '').slice(11, 19);
+      html += `<div class="event-item">
+        <span class="event-ts">${ts}</span>
+        <span class="event-name">${e.event || 'page_view'}</span>
+        <span class="event-url">${e.url || '/'}</span>
+        ${e.data ? `<span style="color:var(--muted);font-size:11px">${JSON.stringify(e.data).slice(0, 60)}</span>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+    tab.innerHTML = html;
+  } catch (e) {
+    tab.innerHTML = `<div class="empty">Failed: ${e.message}</div>`;
+  }
 }
 
 function buildFunnel(stats) {
