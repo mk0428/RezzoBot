@@ -63,15 +63,43 @@ EXCLUDED_IPS = set(
     if ip.strip()
 )
 EXCLUDED_REFERRERS = {"https://security.feishu.cn/", "https://vercel.com/"}
+BOT_UAS = {"stripebot", "googlebot", "bingbot", "yandexbot", "baiduspider",
+           "duckduckbot", "slurp", "facebookexternalhit", "twitterbot",
+           "ahrefsbot", "semrushbot", "mj12bot", "dotbot", "scrapy",
+           "python-requests", "curl", "wget", "go-http-client"}
+
+# Private IP prefixes (Docker: 172.17.0.0-172.31.255.255, K8s: 10.x.x.x, LAN: 192.168.x.x)
+PRIVATE_IP_PREFIXES = (
+    "10.", "172.16.", "172.17.", "172.18.", "172.19.", "172.20.",
+    "172.21.", "172.22.", "172.23.", "172.24.", "172.25.", "172.26.",
+    "172.27.", "172.28.", "172.29.", "172.30.", "172.31.",
+    "192.168.", "127.", "0.", "169.254.",
+)
+
 
 def _is_excluded(entry: dict) -> bool:
-    """Check if a tracking entry should be excluded (founder/internal traffic)."""
-    if entry.get("ip") in EXCLUDED_IPS:
+    """Check if a tracking entry should be excluded (bots/internal traffic/noise)."""
+    ip = entry.get("ip", "")
+    ua = (entry.get("user_agent") or "").lower()
+
+    # 1) Explicitly excluded IPs (founder/team)
+    if ip in EXCLUDED_IPS:
         return True
+
+    # 2) Private/internal IPs (Docker bridge, LAN, localhost)
+    if ip.startswith(PRIVATE_IP_PREFIXES):
+        return True
+
+    # 3) Known bot crawlers by User-Agent
+    for bot in BOT_UAS:
+        if bot in ua:
+            return True
+
+    # 4) Known bot referrers
     ref = (entry.get("referrer") or "").strip()
     if ref in EXCLUDED_REFERRERS:
         return True
-    # Exclude very short sessions with only 1 event from known internal IP ranges
+
     return False
 LANG_COUNTRY_MAP = {
     "en": "US", "zh": "CN", "es": "ES", "fr": "FR", "de": "DE",
@@ -172,10 +200,32 @@ async def track_stats():
                     if ts.startswith(today):
                         stats["today"] += 1
 
-                    # Referrer sources
-                    ref = entry.get("referrer", "")
+                    # Referrer sources — group by domain
+                    ref = (entry.get("referrer") or "").strip()
                     if ref:
-                        stats["referrers"][ref] = stats["referrers"].get(ref, 0) + 1
+                        # Group into source categories
+                        domain = ref.replace("https://", "").replace("http://", "").split("/")[0].split("?")[0]
+                        if "google" in domain:
+                            source = "Google"
+                        elif "facebook" in domain or "fb." in domain or "instagram" in domain:
+                            source = "Social"
+                        elif "twitter" in domain or "x.com" in domain or "linkedin" in domain:
+                            source = "Social"
+                        elif "reddit" in domain:
+                            source = "Social"
+                        elif "bing" in domain or "yahoo" in domain or "duckduckgo" in domain:
+                            source = "Search"
+                        elif "youtube" in domain or "tiktok" in domain:
+                            source = "Social"
+                        elif "producthunt" in domain:
+                            source = "ProductHunt"
+                        elif "github" in domain:
+                            source = "GitHub"
+                        elif "t.co" in domain or "lnkd.in" in domain:
+                            source = "Social"
+                        else:
+                            source = domain[:40]  # Keep raw domain as fallback
+                        stats["referrers"][source] = stats["referrers"].get(source, 0) + 1
 
                     # GEO distribution
                     country = entry.get("country", "unknown")
