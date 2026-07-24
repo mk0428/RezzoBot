@@ -178,6 +178,11 @@ export default function ResumeScannerPage() {
               <li><Link href="/blog/resume-analyzer" className="text-blue-600 hover:underline">Free Resume Analyzer: Check Against Any Job Description</Link></li>
               <li><Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">How to Format Your Resume for ATS in 2026</Link></li>
               <li><Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Resume Mistakes That Cost You Interviews</Link></li>
+              <li><Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker and Do You Really Need One?</Link></li>
+              <li><Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score: What's a Good Score and How to Improve It</Link></li>
+              <li><Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Resume Checkers in 2026 — Tested & Compared</Link></li>
+              <li><Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">How to Make Your Resume Stand Out to ATS in 2026</Link></li>
+              <li><Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal vs RezzoBot — Best Free ATS Checker</Link></li>
             </ul>
           </div>
         </div>

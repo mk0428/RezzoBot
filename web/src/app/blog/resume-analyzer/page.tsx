@@ -64,7 +64,7 @@ export default function ResumeAnalyzerPage() {
             <span>5 min read</span>
           </div>
           <p className="text-lg text-gray-600 leading-relaxed">
-            Most resumes get rejected by ATS before a recruiter reads them. A resume analyzer shows you exactly what's working and what's not — so you can fix it before you apply.
+            A resume analyzer is a tool that scans your resume against a job description and shows you exactly which keywords match, what is missing, and how to improve your score — before a recruiter ever sees it. Here is how to use one effectively.
           </p>
         </header>
 
@@ -168,6 +168,11 @@ export default function ResumeAnalyzerPage() {
               <li><Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Resume Mistakes That Cost You Interviews</Link></li>
               <li><Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score: What's a Good Score and How to Improve It</Link></li>
               <li><Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Resume Checkers in 2026 — Tested & Compared</Link></li>
+              <li><Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker and Do You Really Need One?</Link></li>
+              <li><Link href="/blog/resume-scanner" className="text-blue-600 hover:underline">Resume Scanner: Check Your Resume for ATS Keywords Instantly</Link></li>
+              <li><Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">How to Format Your Resume for ATS in 2026</Link></li>
+              <li><Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">How to Make Your Resume Stand Out to ATS in 2026</Link></li>
+              <li><Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal vs RezzoBot — Best Free ATS Checker</Link></li>
             </ul>
           </div>
         </div>

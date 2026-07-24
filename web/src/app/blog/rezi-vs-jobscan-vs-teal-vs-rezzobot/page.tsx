@@ -269,6 +269,10 @@ export default function PostPage() {
               <Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">ATS Resume Format Guide</Link>
               {' · '}
               <Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Make Resume Stand Out</Link>
+              {' · '}
+              <Link href="/blog/resume-analyzer" className="text-blue-600 hover:underline">Free Resume Analyzer</Link>
+              {' · '}
+              <Link href="/blog/resume-scanner" className="text-blue-600 hover:underline">Resume Scanner</Link>
             </p>
           </div>
         </div>

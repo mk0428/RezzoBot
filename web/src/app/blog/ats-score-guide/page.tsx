@@ -195,7 +195,9 @@ export default function PostPage() {
               {' '}<Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">ATS Resume Format Guide</Link>,
               {' '}<Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Checkers</Link>,
               {' '}<Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Make Resume Stand Out</Link>,
-              {' '}<Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
+              {' '}<Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>,
+              {' '}<Link href="/blog/resume-analyzer" className="text-blue-600 hover:underline">Free Resume Analyzer</Link>,
+              {' '}<Link href="/blog/resume-scanner" className="text-blue-600 hover:underline">Resume Scanner</Link>
             </p>
           </div>
         </div>
