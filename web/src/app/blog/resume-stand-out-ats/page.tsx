@@ -285,6 +285,12 @@ export default function PostPage() {
               <Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Checkers</Link>
               {' · '}
               <Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
+              {' · '}
+              <Link href="/blog/resume-analyzer" className="text-blue-600 hover:underline">Free Resume Analyzer</Link>
+              {' · '}
+              <Link href="/blog/resume-scanner" className="text-blue-600 hover:underline">Resume Scanner</Link>
+              {' · '}
+              <Link href="/blog/how-ats-parsers-work" className="text-blue-600 hover:underline">How ATS Parsers Actually Work</Link>
             </p>
           </div>
         </div>
