@@ -19,6 +19,15 @@ services:
       timeout: 10s
       retries: 3
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.web
+    container_name: rezzobot-web
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+
   bot:
     build:
       context: .
