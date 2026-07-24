@@ -10,6 +10,8 @@ services:
       - rezzobot-data:/data
     env_file:
       - .env
+    environment:
+      - EXCLUDED_IPS=98.96.223.133
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]

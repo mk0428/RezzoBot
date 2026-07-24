@@ -57,6 +57,11 @@ def _check_daily_score_limit(ip: str) -> tuple[bool, str]:
         return True, "ok"  # Fail open on errors
 
 TRACK_LOG = "/data/tracking.jsonl"
+EXCLUDED_IPS = set(
+    ip.strip()
+    for ip in os.environ.get("EXCLUDED_IPS", "").split(",")
+    if ip.strip()
+)
 LANG_COUNTRY_MAP = {
     "en": "US", "zh": "CN", "es": "ES", "fr": "FR", "de": "DE",
     "ja": "JP", "ko": "KR", "pt": "BR", "ru": "RU", "ar": "SA",
@@ -138,6 +143,9 @@ async def track_stats():
                     continue
                 try:
                     entry = json.loads(line)
+                    # Skip excluded IPs (e.g. founder/team)
+                    if entry.get("ip") in EXCLUDED_IPS:
+                        continue
                     stats["total_events"] += 1
 
                     # Event type breakdown
