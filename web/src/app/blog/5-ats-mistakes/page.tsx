@@ -146,6 +146,8 @@ export default function PostPage() {
               <Link href="/blog/resume-scanner" className="text-blue-600 hover:underline">Resume Scanner</Link>
               {' · '}
               <Link href="/blog/how-ats-parsers-work" className="text-blue-600 hover:underline">How ATS Parsers Actually Work</Link>
+              {' · '}
+              <Link href="/blog/best-free-ats-checkers-2026-compared" className="text-blue-600 hover:underline">Best Free ATS Checkers — 6 Tools Compared & Compared</Link>
             </p>
           </div>
         </div>

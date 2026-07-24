@@ -290,6 +290,8 @@ export default function PostPage() {
               <Link href="/blog/resume-scanner" className="text-blue-600 hover:underline">Resume Scanner</Link>
               {' \u00b7 '}
               <Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
+              {' \u00b7 '}
+              <Link href="/blog/best-free-ats-checkers-2026-compared" className="text-blue-600 hover:underline">Best Free ATS Checkers — 6 Tools Compared & Compared</Link>
             </p>
           </div>
         </div>
