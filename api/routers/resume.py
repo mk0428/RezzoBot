@@ -101,7 +101,7 @@ async def track_pageview(request: Request):
     try:
         body = await request.json()
         ua = request.headers.get("user-agent", "")
-        body["ip"] = request.client.host if request.client else "unknown"
+        body["ip"] = _get_client_ip(request)
         body["user_agent"] = ua
         body["device_type"] = _parse_device(ua)
         body["country"] = _guess_country(
