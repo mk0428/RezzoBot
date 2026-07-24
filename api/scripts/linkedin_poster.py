@@ -17,6 +17,8 @@ sys.path.insert(0, "/app")
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", os.environ.get("DEEPSEEK_API_KEY", ""))
 DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 
+REZZOBOT_URL = "https://rezzobot.com"
+
 POST_TOPICS = [
     "Resume keyword optimization for ATS",
     "Common resume mistakes that fail ATS filters",
@@ -43,14 +45,17 @@ an AI-powered ATS resume checker. Your posts are:
 
 
 def _generate_prompt(topic: str) -> str:
+    url = REZZOBOT_URL
     return f"""Write a LinkedIn post about: {topic}
 
 The post should:
 1. Start with a hook that resonates with job seekers
 2. Give 1-2 specific, actionable insights
 3. Include a real example
-4. End with: Check RezzoBot for your free ATS resume analysis
+4. End with: Check out RezzoBot for your free ATS resume analysis → {url}
 5. Add 2-4 relevant hashtags
+
+IMPORTANT: Include the full URL {url} in the post body. LinkedIn makes it clickable.
 
 Today: {datetime.now().strftime('%B %d, %Y')}"""
 
@@ -111,7 +116,7 @@ async def main():
             "invisible.\n\n"
             "The fix? Match your keywords to the job description. It's that "
             "simple—and that hard.\n\n"
-            "Get your free ATS score at RezzoBot\n\n"
+            f"Get your free ATS score at RezzoBot → {REZZOBOT_URL}\n\n"
             "#ATS #ResumeTips #JobSearch"
         )
         print(f"  ⚠️ Using fallback content ({len(content)} chars)")
