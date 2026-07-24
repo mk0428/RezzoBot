@@ -170,6 +170,7 @@ export default function PricingPage() {
                   {tier.planType ? (
                     <button
                       onClick={() => {
+                        trackEvent('checkout_click', { plan: tier.planType! });
                         setLoading(tier.planType!);
                         createCheckoutSession(tier.planType!).finally(() => setLoading(null));
                       }}

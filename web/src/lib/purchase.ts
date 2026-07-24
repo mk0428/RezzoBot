@@ -1,3 +1,5 @@
+import { trackEvent } from "./tracker";
+
 export type PurchaseType = 'single' | 'monthly' | 'lifetime';
 
 export interface Purchase {
@@ -68,6 +70,9 @@ export function clearPurchase(): void {
 export function handlePaymentSuccess(type: string | null): void {
   let purchase: Purchase;
   const now = Date.now();
+
+  // Track successful return from Stripe
+  trackEvent('payment_returned', { plan: type || 'unknown', status: 'success' });
 
   switch (type) {
     case 'lifetime':

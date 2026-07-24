@@ -28,6 +28,7 @@ function LandingContent() {
       // Clear URL params
       window.history.replaceState({}, '', '/');
     } else if (payment === 'cancelled') {
+      trackEvent('payment_returned', { status: 'cancelled' });
       setPaymentStatus('cancelled');
       window.history.replaceState({}, '', '/');
     }

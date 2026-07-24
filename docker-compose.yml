@@ -12,6 +12,7 @@ services:
       - .env
     environment:
       - EXCLUDED_IPS=98.96.223.133
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]

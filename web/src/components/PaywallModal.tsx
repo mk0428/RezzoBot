@@ -2,6 +2,7 @@
 
 import { X, Check, Sparkles, Zap, ShieldCheck, Crown } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { trackEvent } from "@/lib/tracker";
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
   if (!isOpen || !isMounted) return null;
 
   const handleCheckout = async (type: 'single' | 'monthly' | 'lifetime') => {
+    trackEvent('paywall_checkout_click', { plan: type });
     setLoading(type);
     const url = await createCheckoutSession(type);
     setLoading(null);
