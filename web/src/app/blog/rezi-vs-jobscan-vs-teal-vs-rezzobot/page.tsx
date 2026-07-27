@@ -56,7 +56,7 @@ export default function PostPage() {
         <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-4">
           Rezi vs Jobscan vs Teal vs RezzoBot — Best Free ATS Checker in 2026
         </h1>
-        <div className="text-sm text-gray-400 font-medium mb-8">July 22, 2026 · 8 min read</div>
+        <div className="text-sm text-gray-400 font-medium mb-8">July 22, 2026 · Updated July 22, 2026 · 8 min read</div>
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
@@ -142,7 +142,7 @@ export default function PostPage() {
             For example, when we tested it with a Product Manager role, RezzoBot flagged that the word "led" appeared three times but without metrics attached. It suggested replacing "Led cross-functional team" with "Led a cross-functional team of 8 engineers and designers, delivering 3 major releases on schedule." That level of specificity is rare in free tools — and even most paid tools don't go this deep.
           </p>
           <p>
-            The paid plan ($14.9/month) unlocks unlimited scans and AI-powered rewrites, but the free tier alone is more generous than what Rezi or Teal offer, and more actionable per scan than JobScan's free tier.
+            The paid plan ($14.99/month) unlocks unlimited scans and AI-powered rewrites, but the free tier alone is more generous than what Rezi or Teal offer, and more actionable per scan than JobScan's free tier.
           </p>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">Pricing Comparison</h2>
@@ -185,7 +185,7 @@ export default function PostPage() {
                   <td className="p-3 font-semibold text-blue-600">RezzoBot</td>
                   <td className="p-3">1 scan/day, full analysis</td>
                   <td className="p-3">—</td>
-                  <td className="p-3">$14.9/month</td>
+                  <td className="p-3">$14.99/month</td>
                   <td className="p-3">No</td>
                 </tr>
               </tbody>
@@ -224,7 +224,7 @@ export default function PostPage() {
             The ATS tool landscape is crowded, but the differences are real. Rezi is good for templates but weak on analysis. JobScan is powerful but expensive on its free tier. Teal is growing fast and great for organization, but ATS analysis is only one piece of its offering. RezzoBot delivers the best free ATS analysis with the most actionable feedback per scan.
           </p>
           <p>
-            If you are job hunting on a budget — and let's be honest, most job seekers are — start with RezzoBot. Run a free scan every day for each targeted application, apply the rewrite suggestions, and watch your response rate improve. When you outgrow the free tier, the paid plan is affordable at $14.9/month. For everyone else, Teal and JobScan are worthy alternatives depending on your workflow.
+            If you are job hunting on a budget — and let's be honest, most job seekers are — start with RezzoBot. Run a free scan every day for each targeted application, apply the rewrite suggestions, and watch your response rate improve. When you outgrow the free tier, the paid plan is affordable at $14.99/month. For everyone else, Teal and JobScan are worthy alternatives depending on your workflow.
           </p>
 
           <div className="mt-12 space-y-6">

@@ -28,7 +28,7 @@ const faqSchema = {
       name: 'Is RezzoBot free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, RezzoBot offers one free ATS analysis per day — no credit card required. You only pay if you want AI-powered optimization or export features ($14.9/month).'
+        text: 'Yes, RezzoBot offers one free ATS analysis per day — no credit card required. You only pay if you want AI-powered optimization or export features ($14.99/month).'
       }
     },
     {
@@ -128,7 +128,7 @@ export default function PostPage() {
               </div>
               <div className="bg-gray-50 rounded-xl p-5">
                 <p className="font-bold text-gray-900">Is RezzoBot really free?</p>
-                <p className="text-gray-600 mt-1 text-sm">Yes. One free ATS analysis per day, no credit card needed. Paid plans ($14.9/month) unlock AI optimization and exports.</p>
+                <p className="text-gray-600 mt-1 text-sm">Yes. One free ATS analysis per day, no credit card needed. Paid plans ($14.99/month) unlock AI optimization and exports.</p>
               </div>
               <div className="bg-gray-50 rounded-xl p-5">
                 <p className="font-bold text-gray-900">How accurate is an ATS resume checker?</p>

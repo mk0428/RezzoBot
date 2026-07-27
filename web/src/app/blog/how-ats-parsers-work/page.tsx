@@ -56,7 +56,7 @@ export default function PostPage() {
         <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-4">
           How ATS Parsers Actually Work \u2014 What Your Resume Goes Through Before a Recruiter Sees It
         </h1>
-        <div className="text-sm text-gray-400 font-medium mb-8">July 24, 2026 \u00b7 7 min read</div>
+        <div className="text-sm text-gray-400 font-medium mb-8">July 24, 2026 \u00b7 Updated July 24, 2026 \u00b7 7 min read</div>
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">

@@ -61,6 +61,7 @@ export default function ResumeScannerPage() {
           </h1>
           <div className="flex items-center space-x-4 text-sm text-gray-400 font-medium mb-6">
             <span>July 23, 2026</span>
+            <span>Updated July 23, 2026</span>
             <span>5 min read</span>
           </div>
           <p className="text-lg text-gray-600 leading-relaxed">
