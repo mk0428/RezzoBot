@@ -13,7 +13,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <img src="/logo.jpg" alt="RezzoBot" className="w-8 h-8 rounded-lg object-cover" />
+              <img src="/logo.png" alt="RezzoBot" className="w-8 h-8 rounded-lg object-cover" />
               <span className="text-xl font-bold text-gray-900 tracking-tight">RezzoBot</span>
             </Link>
           </div>

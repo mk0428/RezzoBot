@@ -78,8 +78,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
       features: [
         'One-time AI Optimization',
         'Unlimited ATS Diagnosis',
-        'One PDF/DOCX Export',
-        '24h Data Retention'
+        'PDF/DOCX Export',
       ],
       highlight: false
     },
@@ -92,9 +91,8 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
       icon: <Sparkles size={24} className="text-purple-500" />,
       features: [
         'Unlimited AI Optimizations',
-        'Unlimited PDF/DOCX Exports',
         'Priority AI Processing',
-        'Early Access to Features'
+        'Early Access to Features',
       ],
       highlight: true
     },
@@ -105,10 +103,9 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
       planType: 'lifetime' as const,
       icon: <Crown size={24} className="text-amber-500" />,
       features: [
-        'Everything in Monthly Pro',
+        'All Pro Features Unlimited',
         'Pay Once, Use Forever',
-        'Lifetime Updates',
-        'VIP Support'
+        'VIP Support',
       ],
       highlight: false
     }
@@ -135,13 +132,13 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
               <p className="text-gray-500 font-medium">Choose the plan that fits your career goals</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
               {tiers.map((tier) => (
                 <div
                   key={tier.name}
-                  className={`relative flex flex-col p-6 rounded-2xl border-2 transition-all ${
+                  className={`relative flex flex-col p-4 md:p-6 rounded-2xl border-2 transition-all ${
                     tier.highlight
-                      ? 'border-blue-600 shadow-xl shadow-blue-100 scale-105 z-1'
+                      ? 'border-blue-600 shadow-xl shadow-blue-100 md:scale-105 z-1'
                       : 'border-gray-100 hover:border-gray-200'
                   }`}
                 >
@@ -151,21 +148,21 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                     </div>
                   )}
 
-                  <div className="mb-6">{tier.icon}</div>
+                  <div className="mb-4 md:mb-6 hidden md:block">{tier.icon}</div>
 
-                  <h3 className="text-lg font-black text-gray-900 mb-1">{tier.name}</h3>
-                  <p className="text-xs text-gray-400 font-medium mb-4">{tier.description}</p>
+                  <h3 className="text-base md:text-lg font-black text-gray-900 mb-1">{tier.name}</h3>
+                  <p className="text-xs text-gray-400 font-medium mb-3 md:mb-4 hidden md:block">{tier.description}</p>
 
-                  <div className="flex items-baseline mb-6">
-                    <span className="text-3xl font-black text-gray-900">{tier.price}</span>
+                  <div className="flex items-baseline mb-4 md:mb-6">
+                    <span className="text-2xl md:text-3xl font-black text-gray-900">{tier.price}</span>
                     {tier.interval && <span className="text-gray-400 font-bold ml-1">{tier.interval}</span>}
                   </div>
 
-                  <ul className="space-y-3 mb-8 flex-grow">
+                  <ul className="space-y-2 md:space-y-3 mb-4 md:mb-8 flex-grow">
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-start space-x-2">
-                        <Check size={16} className="text-green-500 mt-0.5 shrink-0" />
-                        <span className="text-[11px] font-bold text-gray-600 leading-tight">{feature}</span>
+                        <Check size={14} className="text-green-500 mt-0.5 shrink-0" />
+                        <span className="text-[10px] md:text-[11px] font-bold text-gray-600 leading-tight">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -173,7 +170,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                   <button
                     onClick={() => handleCheckout(tier.planType)}
                     disabled={loading === tier.planType}
-                    className={`w-full py-3 rounded-xl font-black text-sm text-center transition-all ${
+                    className={`w-full py-2.5 md:py-3 rounded-xl font-black text-xs md:text-sm text-center transition-all ${
                       loading === tier.planType ? 'opacity-60 cursor-not-allowed' : ''
                     } ${
                       tier.highlight
