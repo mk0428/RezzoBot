@@ -18,6 +18,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    mem_limit: 512m
+    mem_reservation: 256m
+    oom_kill_disable: false
 
   web:
     build:
@@ -27,6 +30,8 @@ services:
     ports:
       - "3002:3002"
     restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 128m
 
   bot:
     build:
@@ -39,6 +44,8 @@ services:
     depends_on:
       api:
         condition: service_started
+    mem_limit: 256m
+    mem_reservation: 128m
 
   rss-bridge:
     image: rssbridge/rss-bridge:latest
@@ -49,6 +56,8 @@ services:
       - ./rss-bridge-config.ini.php:/app/config.ini.php:ro
       - rss-bridge-cache:/app/cache
     restart: unless-stopped
+    mem_limit: 128m
+    mem_reservation: 64m
 
 volumes:
   rss-bridge-cache:
