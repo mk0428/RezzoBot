@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PaywallModal from '@/components/PaywallModal';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
@@ -26,6 +26,15 @@ export default function UploadPage() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [showJdInput, setShowJdInput] = useState(false);
   const [isAutoMatched, setIsAutoMatched] = useState(false);
+  const hasTrackedPanelView = useRef(false);
+
+  // Track when the role input panel appears (after parse, before analysis)
+  useEffect(() => {
+    if (isUploaded && !atsReport && !hasTrackedPanelView.current) {
+      hasTrackedPanelView.current = true;
+      trackEvent("role_input_panel_viewed");
+    }
+  }, [isUploaded, atsReport]);
 
   const handleFileSelect = async (file: File) => {
     setIsLoading(true);
@@ -213,6 +222,7 @@ export default function UploadPage() {
                         type="text"
                         value={targetRole}
                         onChange={(e) => setTargetRole(e.target.value)}
+                        onFocus={() => trackEvent("target_role_focused")}
                         onKeyDown={(e) => e.key === 'Enter' && targetRole.trim() && handleRunAnalysis()}
                         placeholder="e.g. Software Engineer, Product Manager, Data Scientist"
                         className="flex-grow px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all"
