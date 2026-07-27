@@ -51,6 +51,13 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
   const handleCheckout = async (type: 'single' | 'monthly' | 'lifetime') => {
     trackEvent('paywall_checkout_click', { plan: type });
+    // GA4: begin checkout
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'begin_checkout', { 
+        currency: 'USD', value: type === 'single' ? 4.99 : type === 'monthly' ? 14.99 : 666,
+        items: [{ item_name: type, price: type === 'single' ? 4.99 : type === 'monthly' ? 14.99 : 666, quantity: 1 }]
+      });
+    }
     setLoading(type);
     const url = await createCheckoutSession(type);
     setLoading(null);

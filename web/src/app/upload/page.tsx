@@ -55,6 +55,10 @@ export default function UploadPage() {
         type: file.type || "unknown",
         text_len: data.text.length,
       });
+      // GA4: resume uploaded
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'resume_uploaded', { file_type: file.type || 'unknown' });
+      }
     } catch (err: any) {
       const msg = err.message || 'Failed to parse resume';
       setError(msg);
@@ -118,6 +122,13 @@ export default function UploadPage() {
         mode,
         is_auto_match: Boolean(targetRole.trim() && !jobDescription.trim())
       });
+      // GA4: analysis completed
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'analysis_completed', { 
+          score: data.report.score,
+          is_auto_match: Boolean(targetRole.trim() && !jobDescription.trim())
+        });
+      }
       // Increment daily count
       localStorage.setItem('_rezzobot_analysis_count', String(dailyCount + 1));
     } catch (err: any) {

@@ -55,6 +55,7 @@ export const metadata: Metadata = {
 };
 
 import { Analytics } from "@vercel/analytics/react";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import TrackingPing from "./components/TrackingPing";
 
 export default function RootLayout({
@@ -144,6 +145,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
         <Analytics />
+        <GoogleAnalytics gaId="G-V7QVPZ9VXY" />
         <TrackingPing />
       </body>
     </html>
