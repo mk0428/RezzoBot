@@ -99,7 +99,59 @@ IMPORTANT: matched_keywords and missing_keywords should be EMPTY arrays. Do NOT 
 IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text."""
 
     else:
-        prompt = f"""You are a professional ATS (Applicant Tracking System) expert.
+        # Detect if jd_text is a role title (short) or a full JD
+        is_role_title = len(jd_text.strip()) < 100
+
+        if is_role_title:
+            role = jd_text.strip() or "the user's target role"
+            prompt = f"""You are a professional ATS (Applicant Tracking System) expert.
+Analyze the following resume against the target role: "{role}".
+
+Since no specific job description was provided, infer the TYPICAL requirements for this role
+based on industry standards (required skills, experience level, common tools, certifications).
+Then score how well the resume matches those inferred requirements.
+
+Resume:
+---
+{resume_text}
+---
+
+Return ONLY valid JSON with these fields:
+
+{{
+  "score": <integer 0-100>,
+  "matched_keywords": [<list of keywords/qualifications the resume HAS that are relevant for this role>],
+  "missing_keywords": [<list of keywords/qualifications typically expected for this role but MISSING from resume>],
+  "match_detail": "<one-sentence summary of how well the resume fits this role>",
+  "suggestions": [
+    {{
+      "section": "<resume section name: Summary | Experience - [job title] | Skills | Education | Certifications>",
+      "issue": "<what's wrong in one sentence>",
+      "evidence": "<exact quote from resume >",
+      "suggested_fix": "<specific, actionable rewrite suggestion. If the fix changes a specific word/phrase, show before→after.>"
+    }}
+  ],
+  "quick_wins": [
+    {{
+      "change": "<exact word or phrase to change>",
+      "from": "<current text>",
+      "to": "<suggested replacement text>",
+    }}
+  ]
+}}
+
+RULES for suggestions:
+1. Each suggestion MUST reference a SPECIFIC part of the resume
+2. suggested_fix must be so specific the user can immediately act on it — word-level changes preferred
+3. Aim for 3-5 suggestions total, prioritized by impact
+4. quick_wins: list 2-3 single-word or single-phrase replacements
+5. Do NOT suggest fabricating experience — only suggest rewording what exists
+6. Do NOT suggest adding skills the user clearly doesn't have
+7. Mark this analysis as "Auto-matched" — note it's based on inferred requirements, not a real JD
+
+IMPORTANT: Return ONLY valid JSON. No markdown, no code blocks, no extra text."""
+        else:
+            prompt = f"""You are a professional ATS (Applicant Tracking System) expert.
 Compare the following resume and job description (JD) and provide a structured matching analysis.
 
 Resume:
