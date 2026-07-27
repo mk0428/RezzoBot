@@ -144,13 +144,15 @@ export default function UploadPage() {
   };
 
   const handleOptimizeClick = () => {
-    if (!resumeText || !jobDescription) return;
+    if (!resumeText) return;
 
     const params = new URLSearchParams();
     params.set('resume', resumeText);
-    params.set('jd', jobDescription);
+    const optimizeJd = jobDescription.trim() || targetRole.trim();
+    if (!optimizeJd) return;
+    params.set('jd', optimizeJd);
 
-      router.push(`/optimize?${params.toString()}`);
+    router.push(`/optimize?${params.toString()}`);
   };
 
   return (
