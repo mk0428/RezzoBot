@@ -1,0 +1,26 @@
+# RezzoBot — ATS Resume Optimizer
+
+## About
+RezzoBot is an ATS resume checking tool that analyzes your resume against job descriptions, identifies missing keywords, and provides optimization suggestions without rewriting your content.
+
+## Key pages
+- https://rezzobot.com — Homepage, resume upload, ATS score
+- https://rezzobot.com/blog — Blog with ATS tips and guides
+- https://rezzobot.com/pricing — Pricing: Free analysis, $4.99 single, $14.99/mo
+
+## Top blog posts
+- https://rezzobot.com/blog/5-ats-mistakes — 5 ATS resume mistakes killing your job applications
+- https://rezzobot.com/blog/ats-score-guide — What is a good ATS match score? Complete guide
+- https://rezzobot.com/blog/ats-resume-format — ATS-friendly resume format guide
+- https://rezzobot.com/blog/best-free-ats-checkers — Best free ATS checkers compared
+- https://rezzobot.com/blog/resume-stand-out-ats — How to make your resume stand out to ATS
+- https://rezzobot.com/blog/how-ats-parsers-work — How ATS parsers actually work
+- https://rezzobot.com/blog/ats-resume-checker — What is an ATS resume checker
+- https://rezzobot.com/blog/resume-analyzer — Best resume analyzers for job seekers
+- https://rezzobot.com/blog/resume-scanner — Resume scanners and how they work
+- https://rezzobot.com/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot — ATS tool comparison
+
+## Top pages
+- https://rezzobot.com/upload — Upload and check your resume for ATS compatibility
+- https://rezzobot.com/analyze — Free ATS analysis
+- https://rezzobot.com/score — Get your ATS match score

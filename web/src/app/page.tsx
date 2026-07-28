@@ -62,13 +62,12 @@ function LandingContent() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
-              Your Resume, Your Story.<br />
-              <span className="text-blue-600">Check, Score & Optimize</span>{' '}
-              Before You Apply
+              Check If Your Resume Passes<br />
+              <span className="text-blue-600">ATS Screening — Free</span>
             </h1>
 
             <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
-              We don't write your resume for you. We analyze it, score it, and show you what's missing — so you can fix it yourself and actually own your story.
+              Upload your resume, paste in the job description, and get an instant ATS match score in seconds. See which keywords you&apos;re matching, what&apos;s missing, and how to optimize without fabricating experience.
             </p>
 
             <div className="pt-8">
@@ -82,56 +81,6 @@ function LandingContent() {
               <div className="text-xl font-bold">Meta</div>
               <div className="text-xl font-bold">Apple</div>
               <div className="text-xl font-bold">Netflix</div>
-            </div>
-          </div>
-        </section>
-
-        {/* Philosophy / CEO Section */}
-        <section className="py-24 px-4 bg-gradient-to-b from-white to-blue-50/30">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <div className="inline-block px-4 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-black uppercase tracking-widest">
-              Our Philosophy
-            </div>
-
-            <div className="bg-white rounded-3xl p-10 md:p-14 shadow-lg border border-gray-100 text-left space-y-6">
-              <p className="text-lg md:text-xl text-gray-700 leading-relaxed font-medium">
-                "After conducting countless interviews, I noticed a troubling trend — candidates who couldn&apos;t explain their own resumes. AI tools had written their stories for them, leaving them unprepared when it mattered most."
-              </p>
-
-              <div className="flex items-center space-x-4 border-t border-gray-100 pt-6">
-                <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">KM</div>
-                <div>
-                  <div className="font-bold text-gray-900">Michael Meng</div>
-                  <div className="text-sm text-gray-500">CEO, RezzoBot</div>
-                  <a
-                    href="https://linkedin.com/in/mikemeng428"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 mt-1 font-medium"
-                  >
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                    <span>Connect with me</span>
-                  </a>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-                <p className="text-blue-900 font-semibold mb-2">💬 Talk to the Founder</p>
-                <p className="text-blue-800 text-sm leading-relaxed">
-                  I personally review every piece of feedback. Message me on{' '}
-                  <a href="https://linkedin.com/in/mikemeng428" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">LinkedIn</a>
-                  {' '}with your suggestions, questions, or for 1-on-1 career advice. I read every message.
-                </p>
-              </div>
-
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
-                <p className="text-amber-900 font-semibold mb-2">⚠️ Our Promise</p>
-                <p className="text-amber-800 text-sm leading-relaxed">
-                  We give you insights, suggestions, and feedback — but we won&apos;t write your resume for you.
-                  Your experiences are yours. Your voice is yours. We just help you present it better.
-                  If you can&apos;t explain every word on your resume in an interview, we haven&apos;t done our job.
-                </p>
-              </div>
             </div>
           </div>
         </section>

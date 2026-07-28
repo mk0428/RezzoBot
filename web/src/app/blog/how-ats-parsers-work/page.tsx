@@ -2,14 +2,17 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'How ATS Parsers Actually Work — What Your Resume Goes Through | RezzoBot',
+  title: 'How ATS Parsers Actually Work \u2014 What Your Resume Goes Through | RezzoBot',
   description: 'Behind the scenes of ATS resume parsing: how parsers extract keywords, identify sections, and score your resume. Learn what parsers look for and how to optimize your resume for Workday, Taleo, and iCIMS.',
   keywords: ['how ATS parsers work', 'ATS resume parser', 'how does ATS scanning work', 'resume parsing software', 'ATS parsing errors', 'how ATS reads resume', 'Workday resume parsing', 'Taleo resume parser'],
   openGraph: {
-    title: 'How ATS Parsers Actually Work — Behind the Scenes',
+    title: 'How ATS Parsers Actually Work \u2014 Behind the Scenes',
     description: 'What your resume goes through before a recruiter sees it.',
   },
 };
+
+export const publishedDate = '2026-07-15';
+export const updatedDate = '2026-07-28';
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -56,7 +59,7 @@ export default function PostPage() {
         <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-4">
           How ATS Parsers Actually Work \u2014 What Your Resume Goes Through Before a Recruiter Sees It
         </h1>
-        <div className="text-sm text-gray-400 font-medium mb-8">July 24, 2026 \u00b7 Updated July 24, 2026 \u00b7 7 min read</div>
+        <div className="text-sm text-gray-400 font-medium mb-8">July 15, 2026 · Updated July 28, 2026 · 7 min read</div>
 
         <div className="prose prose-gray max-w-none space-y-6 text-gray-700 leading-relaxed">
           <p className="text-lg font-medium text-gray-600">
@@ -273,25 +276,25 @@ export default function PostPage() {
 
           <div className="mt-8 pt-6 border-t border-gray-100">
             <p className="text-sm text-gray-500 font-medium">
-              \ud83d\udcd6 Related: <Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Match Score Guide</Link>
-              {' \u00b7 '}
-              <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 Common ATS Mistakes</Link>
-              {' \u00b7 '}
-              <Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">ATS Resume Format Guide</Link>
-              {' \u00b7 '}
-              <Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">What Is an ATS Resume Checker?</Link>
-              {' \u00b7 '}
-              <Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Best Free ATS Checkers</Link>
-              {' \u00b7 '}
-              <Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Make Resume Stand Out</Link>
-              {' \u00b7 '}
-              <Link href="/blog/resume-analyzer" className="text-blue-600 hover:underline">Free Resume Analyzer</Link>
-              {' \u00b7 '}
+              📖 Related: <Link href="/blog/5-ats-mistakes" className="text-blue-600 hover:underline">5 ATS Mistakes</Link>
+              {' · '}
+              <Link href="/blog/ats-score-guide" className="text-blue-600 hover:underline">ATS Score Guide</Link>
+              {' · '}
+              <Link href="/blog/ats-resume-format" className="text-blue-600 hover:underline">ATS Resume Format</Link>
+              {' · '}
+              <Link href="/blog/best-free-ats-checkers" className="text-blue-600 hover:underline">Free ATS Checkers</Link>
+              {' · '}
+              <Link href="/blog/resume-stand-out-ats" className="text-blue-600 hover:underline">Stand Out to ATS</Link>
+              {' · '}
+              <Link href="/blog/ats-resume-checker" className="text-blue-600 hover:underline">ATS Resume Checker</Link>
+              {' · '}
+              <Link href="/blog/resume-analyzer" className="text-blue-600 hover:underline">Resume Analyzer</Link>
+              {' · '}
               <Link href="/blog/resume-scanner" className="text-blue-600 hover:underline">Resume Scanner</Link>
-              {' \u00b7 '}
-              <Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">Rezi vs Jobscan vs Teal</Link>
-              {' \u00b7 '}
-              <Link href="/blog/best-free-ats-checkers-2026-compared" className="text-blue-600 hover:underline">Best Free ATS Checkers — 6 Tools Compared & Compared</Link>
+              {' · '}
+              <Link href="/blog/rezi-vs-jobscan-vs-teal-vs-rezzobot" className="text-blue-600 hover:underline">ATS Tools Compared</Link>
+              {' · '}
+              <Link href="/blog/best-free-ats-checkers-2026-compared" className="text-blue-600 hover:underline">2026 ATS Checkers</Link>
             </p>
           </div>
         </div>
