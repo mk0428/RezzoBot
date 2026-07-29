@@ -116,7 +116,7 @@ async def stripe_webhook(request: Request):
         session = event["data"]["object"]
         plan = "unknown"
         # Extract plan from success_url query param or metadata
-        success_url = session.get("success_url", "")
+        success_url = getattr(session, 'success_url', '')
         if "type=single" in success_url:
             plan = "single"
         elif "type=monthly" in success_url:
@@ -124,15 +124,15 @@ async def stripe_webhook(request: Request):
         elif "type=lifetime" in success_url:
             plan = "lifetime"
 
-        amount = session.get("amount_total", 0)
-        currency = session.get("currency", "usd")
+        amount = getattr(session, 'amount_total', 0)
+        currency = getattr(session, 'currency', 'usd')
 
         _write_track("payment_completed", {
             "plan": plan,
             "amount_cents": amount,
             "currency": currency,
-            "stripe_session_id": session.get("id", ""),
-            "payment_status": session.get("payment_status", ""),
+            "stripe_session_id": getattr(session, 'id', ''),
+            "payment_status": getattr(session, 'payment_status', ''),
         })
 
         logger.info(f"Payment completed: {plan} — {amount/100:.2f} {currency}")
@@ -140,7 +140,7 @@ async def stripe_webhook(request: Request):
     elif event["type"] == "checkout.session.expired":
         session = event["data"]["object"]
         _write_track("checkout_expired", {
-            "stripe_session_id": session.get("id", ""),
+            "stripe_session_id": getattr(session, 'id', ''),
         })
 
     return JSONResponse({"ok": True})
