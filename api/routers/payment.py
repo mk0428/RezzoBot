@@ -36,7 +36,7 @@ class CheckoutResponse(BaseModel):
     url: str
 
 
-def _write_track(event: str, data: dict):
+def _write_track(event: str, data: dict, ip: str = ""):
     """Write a tracking event to the shared tracking log."""
     import json
     import os
@@ -45,6 +45,8 @@ def _write_track(event: str, data: dict):
         "ts": __import__("datetime").datetime.now().isoformat(),
         "data": data,
     }
+    if ip:
+        entry["ip"] = ip
     try:
         os.makedirs(os.path.dirname(TRACK_LOG), exist_ok=True)
         with open(TRACK_LOG, "a") as f:
@@ -53,8 +55,16 @@ def _write_track(event: str, data: dict):
         logger.warning(f"Track write error: {e}")
 
 
+def _get_client_ip(request: Request) -> str:
+    """Extract real client IP from X-Forwarded-For (first hop), matching resume.py."""
+    fwd = request.headers.get("x-forwarded-for", "")
+    if fwd:
+        return fwd.split(",")[0].strip()
+    return request.client.host if request.client else ""
+
+
 @router.post("/create-checkout-session", response_model=CheckoutResponse)
-async def create_checkout_session(req: CheckoutRequest):
+async def create_checkout_session(req: CheckoutRequest, request: Request):
     if not STRIPE_SECRET_KEY:
         raise HTTPException(status_code=500, detail="Stripe not configured")
 
@@ -77,15 +87,15 @@ async def create_checkout_session(req: CheckoutRequest):
             locale="auto",
         )
 
-        # Track: checkout session created
+        # Track: checkout session created — carry client IP so analytics can exclude test traffic
         _write_track("checkout_started", {
             "plan": plan,
             "session_id": session.id,
-        })
+        }, ip=_get_client_ip(request))
 
         return CheckoutResponse(url=session.url)
     except Exception as e:
-        _write_track("checkout_error", {"plan": plan, "error": str(e)})
+        _write_track("checkout_error", {"plan": plan, "error": str(e)}, ip=_get_client_ip(request))
         raise HTTPException(status_code=500, detail=str(e))
 
 

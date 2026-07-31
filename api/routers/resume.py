@@ -76,6 +76,11 @@ PRIVATE_IP_PREFIXES = (
     "192.168.", "127.", "0.", "169.254.",
 )
 
+# Client-triggered payment events — must carry a client IP after the 2026-07-31 fix.
+# Entries missing IP are server-internal/test writes (e.g. founder's own checkout tests)
+# and must be excluded from analytics.
+CLIENT_PAYMENT_EVENTS = {"checkout_started", "checkout_error"}
+
 
 def _is_excluded(entry: dict) -> bool:
     """Check if a tracking entry should be excluded (bots/internal traffic/noise)."""
@@ -98,6 +103,10 @@ def _is_excluded(entry: dict) -> bool:
     # 4) Known bot referrers
     ref = (entry.get("referrer") or "").strip()
     if ref in EXCLUDED_REFERRERS:
+        return True
+
+    # 5) Client-triggered payment events without client IP = test/internal writes
+    if entry.get("event") in CLIENT_PAYMENT_EVENTS and not ip:
         return True
 
     return False
@@ -397,8 +406,8 @@ async def track_funnel():
         "file_selected",
         "file_parsed",
         "paywall_shown",
-        "checkout_click",
-        "payment_returned",
+        "checkout_started",
+        "payment_completed",
     ]
     counts = {step: 0 for step in steps}
     sessions_with_step = {step: set() for step in steps}
@@ -413,7 +422,8 @@ async def track_funnel():
                 continue
             try:
                 entry = json.loads(line)
-                if entry.get("ip") in EXCLUDED_IPS:
+                # Unified exclusion: bots / private IPs / founder / no-IP client payment events
+                if _is_excluded(entry):
                     continue
                 event = entry.get("event", "page_view")
                 sid = entry.get("session_id") or entry.get("ip", "unknown")
@@ -446,6 +456,110 @@ async def track_funnel():
             funnel[-1]["unique_sessions"] / total_sessions * 100, 1
         ) if total_sessions > 0 else 0.0,
     })
+
+
+@router.get("/track/daily")
+async def track_daily(days: int = 7):
+    """Per-day aggregated tracking for the last N days, excluding test traffic.
+
+    Returns {"days": [{"date", "total_events", "page_views", "events", "unique_sessions",
+                       "uploads", "analyses_completed", "checkouts_started",
+                       "payments_completed", "referrers", "geo"}], "totals": {...}}
+    """
+    from datetime import timedelta
+    end = datetime.now().date()
+    start = end - timedelta(days=max(1, min(days, 90)) - 1)
+    start_str, end_str = str(start), str(end)
+
+    day_map = {}
+    sessions_per_day = {}
+
+    if os.path.exists(TRACK_LOG):
+        with open(TRACK_LOG) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                    if _is_excluded(entry):
+                        continue
+                    ts = entry.get("ts", "")
+                    day = ts[:10]
+                    if not (start_str <= day <= end_str):
+                        continue
+
+                    day_map.setdefault(day, {
+                        "date": day,
+                        "total_events": 0,
+                        "page_views": 0,
+                        "events": {},
+                        "uploads": 0,
+                        "analyses_completed": 0,
+                        "checkouts_started": 0,
+                        "payments_completed": 0,
+                        "referrers": {},
+                        "geo": {},
+                    })
+                    d = day_map[day]
+                    d["total_events"] += 1
+
+                    event = entry.get("event", "page_view")
+                    d["events"][event] = d["events"].get(event, 0) + 1
+                    if event == "page_view":
+                        d["page_views"] += 1
+                    elif event == "file_selected":
+                        d["uploads"] += 1
+                    elif event == "analyze_completed":
+                        d["analyses_completed"] += 1
+                    elif event == "checkout_started":
+                        d["checkouts_started"] += 1
+                    elif event == "payment_completed":
+                        d["payments_completed"] += 1
+
+                    sid = entry.get("session_id", "")
+                    if sid:
+                        sessions_per_day.setdefault(day, set()).add(sid)
+
+                    ref = (entry.get("referrer") or "").strip()
+                    if ref:
+                        domain = ref.replace("https://", "").replace("http://", "").split("/")[0].split("?")[0]
+                        if "google" in domain:
+                            source = "Google"
+                        elif "linkedin" in domain or "lnkd.in" in domain:
+                            source = "LinkedIn"
+                        elif "twitter" in domain or "x.com" in domain or "facebook" in domain or "instagram" in domain or "reddit" in domain or "youtube" in domain:
+                            source = "Social"
+                        elif "bing" in domain or "yahoo" in domain or "duckduckgo" in domain:
+                            source = "Search"
+                        else:
+                            source = domain[:40]
+                        d["referrers"][source] = d["referrers"].get(source, 0) + 1
+
+                    country = entry.get("country", "unknown")
+                    d["geo"][country] = d["geo"].get(country, 0) + 1
+
+                except json.JSONDecodeError:
+                    continue
+
+    days_out = []
+    totals = {
+        "total_events": 0, "page_views": 0, "unique_sessions": 0,
+        "uploads": 0, "analyses_completed": 0,
+        "checkouts_started": 0, "payments_completed": 0,
+    }
+    all_sessions = set()
+    for day in sorted(day_map):
+        d = day_map[day]
+        d["unique_sessions"] = len(sessions_per_day.get(day, set()))
+        days_out.append(d)
+        for k in ("total_events", "page_views", "uploads", "analyses_completed",
+                  "checkouts_started", "payments_completed"):
+            totals[k] += d[k]
+        all_sessions |= sessions_per_day.get(day, set())
+    totals["unique_sessions"] = len(all_sessions)
+
+    return JSONResponse({"days": days_out, "totals": totals})
 
 
 SNAPSHOT_DIR = "/data/archive"
