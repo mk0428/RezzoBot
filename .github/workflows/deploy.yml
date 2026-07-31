@@ -18,7 +18,10 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           command_timeout: 10m
           script: |
+            set -e
             cd /root/RezzoBot
+            # 服务器工作树必须与 repo 一致，否则 compose 配置漂移导致 build 失败但 up 假成功
+            git checkout -- docker-compose.yml web/Dockerfile.web 2>/dev/null || true
             git pull origin main
-            docker compose build --no-cache api web
-            docker compose up -d --remove-orphans
+            docker compose build --no-cache api
+            docker compose up -d --no-deps api
